@@ -1,21 +1,14 @@
-# Lúcia Jacinta Crochê
+# Lúcia Jacinta Crochê — V2 demonstrativa
 
-Primeira versão estática da loja, pronta para Cloudflare Pages. Inclui catálogo de exemplo, pesquisa, filtros, carrinho e encomendas pelo WhatsApp.
+Arquivos estáticos para Cloudflare Pages. Produtos, preços e estoque são **demonstrativos**.
 
-## Publicação
+## Instalação
 
-1. Extraia o ZIP.
-2. Envie `index.html`, `style.css` e `app.js` para a raiz do repositório GitHub `lucia-jacinta-croche` (não envie o ZIP como único arquivo).
-3. No Cloudflare Pages, escolha **Import an existing Git repository**, selecione o repositório e configure **Framework preset: None**, **Build command: (vazio)**, **Build output directory: /** (raiz do projeto).
-4. Publique e teste o endereço `.pages.dev`.
-5. Em **Custom domains**, conecte `luciajacintacroche.com.br` após a ativação DNS.
+1. Extraia o ZIP e envie `index.html`, `admin.html`, `style.css`, `data.js`, `app.js`, `admin.js`, `config.js` para a raiz do repositório GitHub `lucia-jacinta-croche`.
+2. Faça commit na branch `main`. O Cloudflare Pages deve publicar automaticamente se a integração estiver ativa.
+3. Abra a loja na raiz do domínio e o painel em `/admin.html`.
+4. Em `config.js`, configure o número comercial com DDI e DDD, apenas dígitos, para ativar o botão de WhatsApp.
 
-## Atenção antes de vender
+## Importante
 
-- Os quatro produtos e preços são **exemplos**. Substitua-os pelos itens reais em `app.js` e use fotos autorizadas.
-- O carrinho apenas gera uma mensagem de WhatsApp. Não existe checkout Pix, cadastro, banco de dados nem painel administrativo nesta versão.
-- Para Pix real: integrar provedor de pagamentos no backend, armazenar credenciais apenas em secrets, validar assinatura/webhook e confirmar pagamento no servidor.
-- Para painel administrativo: autenticação forte, autorização por função, regras de banco e logs.
-- Configurar política de privacidade, trocas/devoluções, frete, dados comerciais obrigatórios e testar em produção antes de anunciar a loja como pronta para pagamentos.
-
-Não coloque senhas, tokens ou chaves privadas no GitHub nem em JavaScript do navegador.
+O painel é **apenas um protótipo local**: usa `localStorage`, portanto alterações não aparecem em outros dispositivos e podem desaparecer ao limpar os dados do navegador. Não há login real, pedidos persistidos ou pagamentos. **Não use como painel administrativo de produção.** Para a versão funcional online, integrar banco de dados, autenticação e permissões no servidor (ex.: Supabase ou Cloudflare D1 + Workers). Nunca incluir senhas ou chaves privadas no JavaScript público.
