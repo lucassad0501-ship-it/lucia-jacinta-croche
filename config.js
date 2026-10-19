@@ -2,6 +2,6 @@
 // Nunca use service_role, secret key ou senha do banco.
 window.SUPABASE_CONFIG = {
   url: 'https://wakhlrraspesozjlzxbs.supabase.co',
-  anonKey: 'COLE_AQUI_SUA_PUBLISHABLE_KEY'
+  anonKey: 'sb_publishable_9CzHxZRwHlTMZvGTyuz8xg_FFMClz_I'
 };
 window.LUCIA_WHATSAPP = '5561994022266';
