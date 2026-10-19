@@ -1,29 +1,34 @@
-LÚCIA JACINTA CROCHÊ — V3.5 COMPLETA
+LÚCIA JACINTA CROCHÊ — V3.5 CORRIGIDA
 
-ARQUIVOS ATIVOS
-- index.html: loja responsiva
-- style.css: visual boutique mobile
-- app.js: busca, categorias, sacola e pedidos WhatsApp
-- admin.html: painel administrativo
-- admin.js: login, produtos, upload de fotos
-- config.js: conexão Supabase
-- assets/logo.jpg: imagem provisória recortada do print enviado
-- supabase-setup.sql: esquema de referência para instalações novas
+Arquivos do pacote (sem arquivos antigos):
+index.html, admin.html, style.css, app.js, admin.js, config.js,
+assets/logo.jpg e LEIA-ME.txt.
 
-IMPORTANTE ANTES DE PUBLICAR
-1. Faça backup do repositório atual e do config.js que já funciona.
-2. Abra config.js e cole sua URL Supabase e a Publishable/anon key públicas existentes.
-   Não use service_role ou chave secreta.
-3. A logo inclusa é um RECORTE DO PRINT, não o arquivo original em alta qualidade.
-   Substitua assets/logo.jpg pela logo.jpg ORIGINAL que já funciona no GitHub.
-4. A V3.5 foi escrita para tabelas 'produtos' com colunas id, nome, categoria,
-   descricao, preco, imagem_url, ativo, created_at e 'admins' com user_id.
-   Se o seu esquema atual tiver outros nomes, adapte admin.js/app.js antes de usar.
-5. NÃO rode supabase-setup.sql sobre banco existente sem conferir as colunas e políticas.
-6. Faça upload dos arquivos da pasta para a raiz do repositório GitHub.
-7. Remova arquivos antigos APENAS depois de testar (ex.: painel.html, data.js).
-8. O Cloudflare Pages deve usar a raiz do repositório como diretório de publicação.
-9. Teste loja, painel, login, cadastro, foto e WhatsApp antes de divulgar.
+O QUE FOI CORRIGIDO:
+- config.js contém a URL Supabase e a chave pública fornecidas pelo proprietário.
+- Variáveis LUCIA_SUPABASE_URL e LUCIA_SUPABASE_ANON_KEY usadas de fato pelos scripts.
+- WhatsApp da loja configurado: 5561994022266.
+- Consultas de produtos ordenam por criado_em (nome real da coluna).
+- Formulário de cadastro e edição inclui estoque, usando a coluna existente.
+- Logo original de alta resolução incluída em assets/logo.jpg.
+- Ajustes visuais no celular e versão de cache 351.
+- Mantém a estrutura atual do banco (id bigint), sem scripts SQL destrutivos.
 
-Este pacote não inclui credenciais privadas, produtos ou dados do banco.
-O pagamento é combinado pelo WhatsApp, não existe checkout automático.
+INSTALAÇÃO:
+1. Faça backup do repositório antes de substituir os arquivos.
+2. No GitHub, atualize os sete arquivos e a imagem assets/logo.jpg,
+   preservando exatamente a estrutura das pastas.
+3. Remova os arquivos legados APENAS depois de validar o novo site.
+4. Aguarde a publicação Cloudflare Pages.
+5. Teste https://luciajacintacroche.com.br/admin.html?v=351
+6. Entre com o login Supabase já autorizado na tabela admins.
+7. Cadastre um produto teste, estoque e foto JPEG/PNG/WEBP de até 5 MB.
+8. Confira a loja e teste a sacola e o botão de pedido WhatsApp.
+
+NÃO EXECUTE SQL DE RECRIAÇÃO: suas tabelas e políticas já existem.
+O upload de fotos requer bucket 'produtos' público e política INSERT
+para seu usuário autenticado. Se o upload falhar, envie a mensagem de erro.
+
+AVISO: esta versão foi revisada no código, mas não foi testada com
+credenciais de administrador no site em produção. A Publishable Key é
+pública; nunca adicione service_role, sb_secret ou senhas ao código.
