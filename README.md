@@ -1,14 +1,20 @@
-# Lúcia Jacinta Crochê V3.0
+# Lúcia Jacinta Crochê — V3.1 Profissional
 
-## Instalação
-1. Guarde uma cópia dos dados locais da V2.1 (exportação JSON, se houver), pois esta V3 usa banco online e **não importa automaticamente** os produtos locais.
-2. Edite `config.js` e substitua `COLE_AQUI_SUA_PUBLISHABLE_KEY` pela **Publishable key** do projeto Supabase. Confirme também a URL do projeto no dashboard.
-3. Substitua na raiz do repositório GitHub estes arquivos: `index.html`, `admin.html`, `app.js`, `admin.js`, `config.js`, `style.css`. Não envie uma subpasta. O deploy do Cloudflare Pages deve apontar para a raiz.
-4. Abra `/admin.html`, entre com a conta autorizada na tabela `public.admins` e cadastre produtos reais. A loja `/` mostra apenas produtos ativos.
-5. `data.js`, `painel.html` e ZIPs antigos podem permanecer temporariamente, mas **painel.html** antigo é público e não deve ser usado. Depois verifique referências e remova os obsoletos.
+## Instalação sem apagar configuração
 
-## Segurança
-A proteção real depende das políticas RLS já criadas no Supabase. Jamais use chave `service_role`, secret key ou senha do banco em `config.js`. A chave publicável pode ficar no navegador. O carrinho envia pedido ao WhatsApp, **não processa pagamento** nem reserva estoque. Preços/estoques são exemplos até cadastrados no Supabase.
+1. No Supabase > SQL Editor, execute **supabase-storage.sql** UMA VEZ (somente se ainda não houver as políticas com esses nomes).
+2. Mantenha o `config.js` que já funciona no seu GitHub, com `window.SUPABASE_CONFIG = {url, anonKey}` e `window.LUCIA_WHATSAPP`. **Não o substitua**: ele contém sua chave pública.
+3. No GitHub, substitua na raiz os arquivos **index.html, admin.html, style.css, app.js, admin.js** pelos arquivos deste pacote.
+4. Crie a pasta `assets` e envie `assets/logo.jpg`. No GitHub você pode usar **Add file > Upload files** e arrastar a pasta inteira no computador; no celular, crie `assets` e envie a foto dentro dela, preservando o caminho `assets/logo.jpg`.
+5. Cloudflare Pages deve publicar automaticamente após os commits. Abra `admin.html?v=310` e faça login; teste com um produto e foto real da galeria. Abra a loja `/?v=310` para confirmar.
+6. Mantenha arquivos antigos por enquanto; os arquivos substituídos devem manter **o mesmo nome**, sem duplicatas. A pasta antiga/ZIP antigo pode ser removida depois de validar o funcionamento.
 
-## Diagnóstico
-Se não carregar, confirme o projeto URL e chave, a rede/CDN do Supabase, políticas RLS e a publicação do Cloudflare. Se o painel disser que a conta não é admin, confirme que o UID autenticado está em `public.admins`.
+## Segurança e limites
+
+- Somente contas autorizadas na tabela `public.admins` podem alterar produtos, protegidos por RLS.
+- Fotos enviadas ao bucket público `produtos` podem ser vistas por qualquer pessoa com o link; não envie documentos pessoais.
+- Fotos: JPEG/PNG/WEBP até 5 MB; uma foto principal por produto nesta versão.
+- Ao substituir fotos ou excluir produtos, arquivos antigos no Storage não são removidos automaticamente. É possível removê-los pelo painel Storage do Supabase.
+- Pedidos são encaminhados ao WhatsApp, sem cobrança automática ou reserva de estoque. Ainda não é checkout Pix.
+- Se a chave estiver correta e a página não atualizar, confira a publicação no Cloudflare Pages e limpe cache; as URLs usam `v=310`.
+- **Nunca** coloque `service_role`, `sb_secret_` ou senha do banco no GitHub.
