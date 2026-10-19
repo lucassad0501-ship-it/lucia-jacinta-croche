@@ -1,0 +1,29 @@
+LÚCIA JACINTA CROCHÊ — V3.5 COMPLETA
+
+ARQUIVOS ATIVOS
+- index.html: loja responsiva
+- style.css: visual boutique mobile
+- app.js: busca, categorias, sacola e pedidos WhatsApp
+- admin.html: painel administrativo
+- admin.js: login, produtos, upload de fotos
+- config.js: conexão Supabase
+- assets/logo.jpg: imagem provisória recortada do print enviado
+- supabase-setup.sql: esquema de referência para instalações novas
+
+IMPORTANTE ANTES DE PUBLICAR
+1. Faça backup do repositório atual e do config.js que já funciona.
+2. Abra config.js e cole sua URL Supabase e a Publishable/anon key públicas existentes.
+   Não use service_role ou chave secreta.
+3. A logo inclusa é um RECORTE DO PRINT, não o arquivo original em alta qualidade.
+   Substitua assets/logo.jpg pela logo.jpg ORIGINAL que já funciona no GitHub.
+4. A V3.5 foi escrita para tabelas 'produtos' com colunas id, nome, categoria,
+   descricao, preco, imagem_url, ativo, created_at e 'admins' com user_id.
+   Se o seu esquema atual tiver outros nomes, adapte admin.js/app.js antes de usar.
+5. NÃO rode supabase-setup.sql sobre banco existente sem conferir as colunas e políticas.
+6. Faça upload dos arquivos da pasta para a raiz do repositório GitHub.
+7. Remova arquivos antigos APENAS depois de testar (ex.: painel.html, data.js).
+8. O Cloudflare Pages deve usar a raiz do repositório como diretório de publicação.
+9. Teste loja, painel, login, cadastro, foto e WhatsApp antes de divulgar.
+
+Este pacote não inclui credenciais privadas, produtos ou dados do banco.
+O pagamento é combinado pelo WhatsApp, não existe checkout automático.
