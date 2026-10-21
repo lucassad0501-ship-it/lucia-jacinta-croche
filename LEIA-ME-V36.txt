@@ -1,0 +1,35 @@
+LÚCIA JACINTA CROCHÊ — V3.6 | PREPARAÇÃO SEGURA
+
+ESTA VERSÃO NÃO ESTÁ PRONTA PARA RECEBER PAGAMENTOS REAIS.
+A V3.5 atual deve permanecer em produção enquanto a integração é testada.
+
+AJUSTES DESTA VERSÃO:
+- Funções Cloudflare Pages usam as variáveis já cadastradas:
+  MERCADOPAGO_ACCESS_TOKEN (Secret), SUPABASE_SECRET_KEY (Secret), SUPABASE_URL (Text).
+- Tabela de pedidos corrigida para public.pedidos_v36.
+- Checkout bloqueado por padrão; somente habilita com ENABLE_ONLINE_PAYMENTS=true.
+- Validação do preço e estoque no servidor, não no navegador.
+- Webhook valida assinatura e consulta o pagamento diretamente no Mercado Pago.
+
+ANTES DE HABILITAR PAGAMENTOS:
+1. Verifique no Supabase se public.pedidos_v36 e a função confirmar_pagamento_mp
+   já existem. NÃO execute o SQL novamente sem antes revisar as estruturas.
+2. Confira se a secret SUPABASE_SECRET_KEY funciona para chamadas administrativas.
+3. Configure no Mercado Pago o segredo de assinatura do webhook e cadastre
+   MP_WEBHOOK_SECRET como Secret no Cloudflare. NÃO compartilhe seu valor.
+4. Confirme se MERCADOPAGO_ACCESS_TOKEN corresponde ao ambiente de teste;
+   configure MP_SANDBOX=true para os testes, e valide o fluxo completo.
+5. Implante primeiro numa branch/preview separada, SEM substituir a V3.5.
+6. Teste pedido, notificações assinadas, pagamento aprovado/rejeitado,
+   atualização do estoque e o atendimento quando o estoque acabar.
+7. Só depois de validar, configurar produção e ativar ENABLE_ONLINE_PAYMENTS=true.
+
+WEBHOOK: https://luciajacintacroche.com.br/api/mercadopago-webhook
+
+IMPORTANTE: as funções requerem Cloudflare Pages Functions, pasta functions/
+na raiz do repositório. O deploy deve incluir esses arquivos.
+Não coloque secrets no GitHub ou config.js. Não envie prints das chaves.
+A confirmação de pagamento depende do webhook; retorno do navegador não
+prova pagamento aprovado. O pedido não coleta frete/endereço nesta versão.
+
+Se já criou pedidos_v36, revise a migração SQL fornecida antes de executá-la.

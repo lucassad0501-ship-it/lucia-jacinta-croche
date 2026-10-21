@@ -11,3 +11,5 @@
   .features{line-height:1.9}
 }
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #a26980;outline-offset:2px}
+
+.secondary-checkout{margin-top:10px;background:#fff!important;color:#633649!important;border:1px solid #633649!important}.checkout-note{display:block;margin-top:12px;color:#665b60;line-height:1.5}.admin-card,.admin-grid,.admin-grid label{min-width:0}.admin-grid input,.admin-grid textarea{max-width:100%;box-sizing:border-box}.admin-item{overflow-wrap:anywhere}
