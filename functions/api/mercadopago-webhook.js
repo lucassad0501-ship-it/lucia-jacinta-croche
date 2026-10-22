@@ -12,7 +12,7 @@ const toHex = (buffer) =>
 
 export async function onRequestPost({ request, env }) {
   try {
-    const webhookSecret = env.MERCADOPAGO_WEBHOOK_SECRET;
+    const webhookSecret = env.MP_WEBHOOK_SECRET;
 
     if (
       !webhookSecret ||
