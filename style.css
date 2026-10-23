@@ -101,3 +101,88 @@ body{background:var(--bg)}
 .hero-art span{font-size:14px;padding:8px 12px}
 .section{padding-top:35px}
 }
+
+/* V4.1 — vitrine delicada rosé e creme */
+:root{--wine:#a56b7b;--pink:#b77e8e;--ink:#493b3e;--muted:#807278;--bg:#fffaf9;--line:#f0e1e4}
+body{background:var(--bg);color:var(--ink)}
+.top-ribbon{text-align:center;background:#b78090;color:#fff;font-size:12px;font-weight:700;letter-spacing:.35px;padding:9px 10px}
+.header{background:#fff;box-shadow:0 3px 20px #a56b7b0a;border-color:#f3e7e8}
+.brand strong{color:#644850}.brand small{color:#b78090}
+.bag{background:#fff8f8;border-color:#edd8de;color:#76515d}.bag b{background:#b78090}
+.hero{background:radial-gradient(circle at 80% 15%,#f5dfe5 0,transparent 45%),linear-gradient(125deg,#fffdfb 0%,#fff4f5 55%,#f7e9e9 100%);padding:62px 5%}
+.hero h1{color:#543b44;letter-spacing:-1.5px;font-size:clamp(43px,5.4vw,70px)}
+.hero h1 em{color:#b67a8b;font-style:italic}
+.hero p{color:#76666c;line-height:1.7}
+.eyebrow{color:#b27789}
+.btn,.product button{background:#b27789;color:white;border-radius:13px}
+.btn:hover,.product button:hover{background:#925d70}
+.features{color:#a46d7c}
+.hero-art img{border-color:#fff;box-shadow:0 18px 55px #b6809130}
+.hero-art span{color:#946777;background:#fffdfd;border-color:#f3dfe5}
+.trust-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;max-width:1180px;margin:0 auto;padding:24px 5%;border-bottom:1px solid #f0e3e7}
+.trust-strip>div{text-align:center;padding:9px 10px}
+.trust-strip strong{display:block;font-size:14px;color:#926170;margin-bottom:6px}
+.trust-strip span{font-size:12px;color:#82757b}
+.section{padding-top:65px}
+.section h2,.brand-story h2,.how-order h2,.faq-section h2{font:700 clamp(29px,4vw,44px)/1.2 Georgia,serif;color:#64454f}
+.category-shortcuts{display:flex;gap:9px;flex-wrap:wrap;margin:25px 0 14px}
+.category-shortcuts button{border:1px solid #ead5dc;background:#fff;color:#946878;padding:10px 17px;border-radius:30px;font-weight:700;font-size:13px}
+.category-shortcuts button.selected,.category-shortcuts button:hover{background:#b27789;color:#fff}
+.tools{margin:12px 0 25px}.tools input,.tools select{background:white;border-color:#ead9de}
+.product{background:#fff;border:1px solid #f0e1e4;box-shadow:0 12px 34px #ab788c12;border-radius:20px}
+.product img{background:#fdf2f5;display:block}
+.product-body{padding:18px}.product h3{color:#634751}
+.product .price{color:#ac6c80}
+.product button{padding:13px}
+.product .product-description{color:#807278;font-size:13px;line-height:1.5;min-height:1.5em}
+.brand-story{background:linear-gradient(120deg,#f9ebef,#fff7f7);padding:75px 5%}
+.brand-story-inner{max-width:1020px;margin:auto;display:grid;grid-template-columns:300px 1fr;gap:65px;align-items:center}
+.story-mark{background:#fff;border-radius:50%;padding:22px;box-shadow:0 15px 45px #b4778a24}
+.story-mark img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:50%}
+.brand-story h2{margin:13px 0}.brand-story p{font-size:17px;color:#7a6870;line-height:1.8}
+.story-link{font-weight:800;color:#a66b7d;text-decoration:none}
+.how-order,.faq-section{max-width:1150px;margin:auto;padding:70px 5%;text-align:center}
+.order-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;text-align:left}
+.order-steps article{padding:28px;background:#fff;border:1px solid #f0e1e4;border-radius:20px}
+.order-steps b{font:700 30px Georgia,serif;color:#d2a3b1}
+.order-steps h3{font:700 22px Georgia,serif;color:#694b55;margin:12px 0}
+.order-steps p{color:#817178;line-height:1.6;margin:0}
+.faq-section{padding-top:30px;max-width:830px}
+.faq-section details{text-align:left;background:#fff;border:1px solid #eedfe3;border-radius:13px;margin:12px 0;padding:17px 20px}
+.faq-section summary{cursor:pointer;font-weight:700;color:#694d56}
+.faq-section details p{color:#817178;line-height:1.7;margin-bottom:0}
+.floating-whatsapp{position:fixed;right:18px;bottom:18px;z-index:8;background:#288d61;color:white;padding:13px 18px;border-radius:40px;box-shadow:0 8px 28px #214c3b44;text-decoration:none;font-weight:800;font-size:14px}
+footer{background:#f9edef;color:#826d75;padding:35px 15px;font-size:13px}
+footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;margin-bottom:9px}.footer-brand span{color:#c58c9e}
+.secondary-checkout{background:#b27789!important;border-color:#b27789!important;color:white!important}
+@media(max-width:700px){
+.top-ribbon{font-size:10px;padding:8px}
+.header{height:70px}.brand img{width:44px;height:44px}
+.hero{padding:30px 5% 30px}
+.hero-content{gap:13px}
+.hero h1{font-size:clamp(32px,8.2vw,43px);line-height:1.14;letter-spacing:-.8px;margin:13px 0}
+.hero p{font-size:15px;line-height:1.55;margin:0 0 9px}
+.hero .eyebrow{font-size:10px;letter-spacing:1.8px}
+.hero .btn{padding:13px 17px;margin-top:9px}
+.features{font-size:12px;line-height:1.7;margin-top:13px}
+.hero-art img{width:min(40vw,145px);border-width:4px}
+.hero-art span{font-size:13px;padding:8px 12px}
+.trust-strip{grid-template-columns:1fr 1fr;gap:0;padding:14px 3%}
+.trust-strip>div{padding:9px 5px}
+.trust-strip>div:last-child{grid-column:1/-1}
+.trust-strip strong{font-size:12px}.trust-strip span{font-size:11px}
+.section{padding-top:40px}
+.category-shortcuts{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.category-shortcuts button{white-space:nowrap;padding:9px 13px}
+.product-body{padding:12px}.product h3{font-size:17px}
+.product .product-description{font-size:12px}
+.brand-story{padding:42px 6%}
+.brand-story-inner{grid-template-columns:1fr;gap:22px;text-align:center}
+.story-mark{max-width:155px;margin:auto;padding:10px}
+.brand-story p{font-size:15px}
+.how-order,.faq-section{padding:45px 5%}
+.order-steps{grid-template-columns:1fr;gap:12px}
+.order-steps article{padding:20px}
+.floating-whatsapp{right:12px;bottom:12px;padding:13px;border-radius:50%;width:49px;height:49px;display:grid;place-items:center;font-size:24px}
+.floating-whatsapp span{display:none}
+}
