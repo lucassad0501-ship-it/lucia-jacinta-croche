@@ -202,3 +202,15 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 @keyframes welcomeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 @keyframes welcomePulse{0%,100%{transform:scale(.96);opacity:.65}50%{transform:scale(1.04);opacity:1}}
 @media(prefers-reduced-motion:reduce){.welcome-glow,.welcome-center,.welcome-logo-wrap{animation:none}.welcome-screen{transition:none}}
+
+/* V4.6 — mensagens de destaque rotativas */
+.hero-announcement{min-height:300px}
+.hero-message-in{animation:heroMessageIn .65s ease both}
+@keyframes heroMessageIn{from{opacity:.2;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.hero-dots{display:flex;align-items:center;gap:10px;margin:10px 0 6px}
+.hero-dots button{appearance:none;width:12px;height:12px;border:1px solid #bb8293;background:#fff;border-radius:20px;padding:0;transition:width .3s,background .3s}
+.hero-dots button.active{width:34px;background:#b27789;border-color:#b27789}
+.hero-dots button:focus-visible{outline:3px solid #9a6175;outline-offset:3px}
+@media(max-width:700px){.hero-announcement{min-height:235px}.hero-dots{margin-top:5px}}
+@media(max-width:380px){.hero-announcement{min-height:270px}}
+@media(prefers-reduced-motion:reduce){.hero-message-in{animation:none}.hero-dots button{transition:none}}
