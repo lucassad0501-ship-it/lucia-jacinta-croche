@@ -47,3 +47,30 @@ body{background:var(--bg)}
 .secondary-checkout:hover{background:#5c4037!important}
 .checkout-note{color:#76685e}
 @media(max-width:700px){.hero{padding-top:42px}.hero h1{letter-spacing:-.8px}.section{padding-top:56px;padding-bottom:62px}.product-body{padding:14px}.product{border-radius:16px}.hero-art img{border-width:5px}}
+
+/* V3.8: navegação por abas e inspiração de ambientes */
+.site-tabs{display:flex;justify-content:center;gap:12px;padding:13px 18px;background:#fffdf9;border-bottom:1px solid #eadfd3;position:relative;z-index:2;overflow-x:auto;scrollbar-width:thin}
+.site-tabs a{display:inline-flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;padding:12px 19px;border-radius:30px;text-decoration:none;color:#735c50;font-weight:700;font-size:14px;transition:.2s}
+.site-tabs a:hover,.site-tabs a.active{background:#755348;color:white}
+.tab-view[hidden]{display:none!important}
+.story-page,.inspiration-page{max-width:1180px;margin:0 auto;padding:75px 5% 90px;min-height:62vh}
+.story-layout{display:grid;grid-template-columns:.85fr 1.15fr;align-items:center;gap:65px}
+.story-visual{background:linear-gradient(145deg,#f4e5da,#e9d1c1);border-radius:34px;padding:50px 30px;text-align:center;box-shadow:0 20px 45px #65473112}
+.story-visual img{width:min(75%,290px);aspect-ratio:1;object-fit:cover;border-radius:50%;border:9px solid #fffaf4;box-shadow:0 16px 35px #624c3922}
+.story-visual span{display:block;margin-top:22px;font:italic 24px Georgia,serif;color:#795449}
+.story-copy h1,.inspiration-intro h1{font:700 clamp(36px,4.7vw,58px)/1.15 Georgia,serif;color:#513c32;margin:17px 0 24px}
+.story-copy p,.inspiration-intro p{font-size:17px;line-height:1.85;color:#71645c}
+.inspiration-intro{text-align:center;max-width:750px;margin:0 auto 40px}
+.room-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px}
+.room-card{border-radius:25px;overflow:hidden;background:#fffdf9;border:1px solid #e9dccc;box-shadow:0 14px 36px #674a3411}
+.room-art{min-height:215px;display:grid;place-items:center;font-size:92px;background:linear-gradient(145deg,#f3e8db,#dfc9b6)}
+.room-kitchen .room-art{background:linear-gradient(145deg,#f3eee1,#d9dfcf)}
+.room-bath .room-art{background:linear-gradient(145deg,#f5e8e2,#d9dfe0)}
+.room-table .room-art{background:linear-gradient(145deg,#f7eddf,#e6d4bd)}
+.room-copy{padding:25px 29px 29px}
+.room-copy small{color:#9b7665;font-weight:800;letter-spacing:2px}
+.room-copy h2{font:700 29px Georgia,serif;margin:10px 0;color:#513c32}
+.room-copy p{color:#76685e;line-height:1.65}
+.room-copy a{display:inline-block;margin-top:10px;color:#755348;font-weight:800}
+.inspiration-note{text-align:center;margin-top:30px;color:#85766b;font-size:13px}
+@media(max-width:700px){.site-tabs{justify-content:flex-start;gap:5px;padding:10px}.site-tabs a{font-size:12px;padding:10px 12px}.story-page,.inspiration-page{padding:45px 5% 65px}.story-layout{grid-template-columns:1fr;gap:30px}.story-visual{padding:32px 18px}.story-visual img{width:180px}.room-grid{grid-template-columns:1fr;gap:18px}.room-art{min-height:160px;font-size:72px}.room-copy{padding:20px}.room-copy h2{font-size:25px}}
