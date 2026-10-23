@@ -1,0 +1,25 @@
+{
+  "name": "Lúcia Jacinta Crochê",
+  "short_name": "Lúcia Jacinta",
+  "description": "Crochê artesanal feito à mão com amor.",
+  "lang": "pt-BR",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff8f7",
+  "theme_color": "#fff8f7",
+  "icons": [
+    {
+      "src": "/assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
