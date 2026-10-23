@@ -74,3 +74,30 @@ body{background:var(--bg)}
 .room-copy a{display:inline-block;margin-top:10px;color:#755348;font-weight:800}
 .inspiration-note{text-align:center;margin-top:30px;color:#85766b;font-size:13px}
 @media(max-width:700px){.site-tabs{justify-content:flex-start;gap:5px;padding:10px}.site-tabs a{font-size:12px;padding:10px 12px}.story-page,.inspiration-page{padding:45px 5% 65px}.story-layout{grid-template-columns:1fr;gap:30px}.story-visual{padding:32px 18px}.story-visual img{width:180px}.room-grid{grid-template-columns:1fr;gap:18px}.room-art{min-height:160px;font-size:72px}.room-copy{padding:20px}.room-copy h2{font-size:25px}}
+
+/* V3.9 — ajustes finais de navegação e apresentação mobile */
+.site-tabs{gap:8px;align-items:center}
+.site-tabs a{background:transparent!important;color:#735c50!important;border:1px solid transparent;flex-shrink:0}
+.site-tabs a:hover{background:#f4ebe3!important;color:#65483d!important}
+.site-tabs a.active,.site-tabs a[aria-current="page"]{background:#755348!important;color:#fff!important;border-color:#755348!important}
+.site-tabs a:not(.active){box-shadow:none!important}
+.hero-art img{width:min(100%,260px)}
+.hero-art span{font-size:18px;padding:11px 18px}
+@media(max-width:700px){
+.header{height:74px}
+.brand img{width:45px;height:45px}
+.brand strong{font-size:clamp(17px,4.3vw,23px)}
+.site-tabs{display:grid;grid-template-columns:.68fr 1.12fr 1.45fr;gap:5px;padding:9px 8px;overflow:visible}
+.site-tabs a{white-space:normal;line-height:1.2;min-height:44px;font-size:clamp(10px,2.6vw,13px);padding:7px 4px;border-radius:12px;letter-spacing:-.2px}
+.hero{padding:28px 5% 30px}
+.hero-content{gap:12px}
+.hero h1{font-size:clamp(31px,8vw,43px);line-height:1.12;margin:12px 0}
+.hero p{font-size:15px;line-height:1.55;margin:0 0 9px}
+.hero .eyebrow{font-size:10px;letter-spacing:2px}
+.hero .btn{padding:13px 18px;margin-top:10px}
+.features{margin-top:12px;line-height:1.65;font-size:12px}
+.hero-art{margin-top:0}
+.hero-art img{width:min(42vw,155px);border-width:4px}
+.hero-art span{font-size:14px;padding:8px 12px}
+.section{padding-top:35px}
+}
