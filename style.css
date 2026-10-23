@@ -13,3 +13,37 @@
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #a26980;outline-offset:2px}
 
 .secondary-checkout{margin-top:10px;background:#fff!important;color:#633649!important;border:1px solid #633649!important}.checkout-note{display:block;margin-top:12px;color:#665b60;line-height:1.5}.admin-card,.admin-grid,.admin-grid label{min-width:0}.admin-grid input,.admin-grid textarea{max-width:100%;box-sizing:border-box}.admin-item{overflow-wrap:anywhere}
+
+/* V3.7 — atmosfera acolhedora, casa e artesanato */
+:root{--wine:#694b43;--pink:#a77775;--ink:#3d322d;--muted:#766e65;--bg:#fcf8f2;--line:#e9dfd2}
+body{background:var(--bg)}
+.header{background:#fffdf9;border-bottom-color:#e8dfd1;box-shadow:0 2px 16px #4e39200a}
+.brand small{color:#98736b}
+.bag{background:#f9f2e9;border-color:#e9dccc}
+.bag b{background:#795449}
+.hero{background:radial-gradient(circle at 85% 12%,#f5e4d9 0,transparent 45%),linear-gradient(135deg,#fffaf1 0%,#f6eee5 62%,#f5e7df 100%);position:relative}
+.hero h1{letter-spacing:-1.6px}
+.hero h1 em{color:#a16d69}
+.hero p{color:#6f625a}
+.eyebrow{color:#a17469}
+.features{color:#79574b}
+.hero-art img{border:8px solid #fffaf3;box-shadow:0 20px 50px #7d5e4429}
+.hero-art span{background:#fffdf9;color:#77574e;border:1px solid #f0e2d5}
+.btn,.product button{background:#755348;border-radius:12px;transition:transform .18s,background .18s,box-shadow .18s}
+.btn:hover,.product button:hover{background:#5c4037;transform:translateY(-2px);box-shadow:0 9px 20px #5c40371d}
+.section{padding-top:82px;padding-bottom:85px}
+.section h2,.about h2{color:#4e3b32}
+.tools input,.tools select{border-color:#e4d9cc;background:#fffefa}
+.product{border:1px solid #eadfd3;border-radius:22px;background:#fffdfa;box-shadow:0 12px 32px #6d503510;transition:transform .2s,box-shadow .2s}
+.product:hover{transform:translateY(-4px);box-shadow:0 18px 38px #6d50351c}
+.product img{background:#f4ede3}
+.product-body{padding:20px}
+.product .price{color:#795449}
+.about{background:linear-gradient(145deg,#f4e8dd,#f8efe5);border-top:1px solid #e9dccc;border-bottom:1px solid #e9dccc}
+.about img{border:6px solid #fff9f2;box-shadow:0 10px 24px #71513b1f}
+.cart-panel{background:#fffdf9}
+.cart-footer{background:#fcf6ed}
+.secondary-checkout{background:#755348!important;color:#fff!important;border-color:#755348!important}
+.secondary-checkout:hover{background:#5c4037!important}
+.checkout-note{color:#76685e}
+@media(max-width:700px){.hero{padding-top:42px}.hero h1{letter-spacing:-.8px}.section{padding-top:56px;padding-bottom:62px}.product-body{padding:14px}.product{border-radius:16px}.hero-art img{border-width:5px}}
