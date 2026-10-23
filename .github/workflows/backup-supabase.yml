@@ -1,0 +1,43 @@
+name: Backup criptografado do Supabase
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 6 * * *'
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+    steps:
+      - name: Validar configuração
+        shell: bash
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::error::Configure SUPABASE_DB_URL e BACKUP_ENCRYPTION_PASSPHRASE em Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+      - name: Instalar ferramentas PostgreSQL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+      - name: Exportar e criptografar banco
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          pg_dump "$DATABASE_URL" --format=custom --no-owner --no-acl --file=/tmp/backup.dump
+          test -s /tmp/backup.dump
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 200000 -in /tmp/backup.dump -out backup-supabase.dump.enc -pass env:BACKUP_PASSPHRASE
+          rm -f /tmp/backup.dump
+          test -s backup-supabase.dump.enc
+      - name: Guardar backup criptografado por 14 dias
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-db-${{ github.run_id }}
+          path: backup-supabase.dump.enc
+          retention-days: 14
+          if-no-files-found: error
