@@ -1,0 +1,43 @@
+name: Testar restauracao do backup (isolado)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+    steps:
+      - name: Validar segredo de criptografia
+        shell: bash
+        run: |
+          test -n "$BACKUP_PASSPHRASE" || { echo "::error::Secret BACKUP_ENCRYPTION_PASSPHRASE ausente"; exit 1; }
+      - name: Baixar backup da execucao aprovada
+        uses: actions/download-artifact@v4
+        with:
+          name: supabase-db-40211725963
+          run-id: 40211725963
+          github-token: ${{ github.token }}
+      - name: Verificar arquivo criptografado
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s backup-supabase.dump.enc
+          test "$(head -c 8 backup-supabase.dump.enc)" = "Salted__"
+      - name: Descriptografar e validar formato PostgreSQL 17
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in backup-supabase.dump.enc -out /tmp/restore-test.dump -pass env:BACKUP_PASSPHRASE
+          test -s /tmp/restore-test.dump
+          docker pull --quiet postgres:17
+          docker run --rm -v /tmp/restore-test.dump:/backup.dump:ro postgres:17 pg_restore --list /backup.dump > /tmp/backup-contents.txt
+          docker run --rm -v /tmp/restore-test.dump:/backup.dump:ro postgres:17 pg_restore --file=/dev/null /backup.dump
+          echo "Arquivo descriptografado e pg_restore conseguiu ler e gerar o SQL."
+      - name: Limpar dados temporarios
+        if: always()
+        run: rm -f /tmp/restore-test.dump /tmp/backup-contents.txt
