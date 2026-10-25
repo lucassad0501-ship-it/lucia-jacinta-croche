@@ -20,16 +20,16 @@ jobs:
             echo "::error::Configure SUPABASE_DB_URL e BACKUP_ENCRYPTION_PASSPHRASE em Settings > Secrets and variables > Actions."
             exit 1
           fi
-      - name: Instalar ferramentas PostgreSQL
+      - name: Disponibilizar pg_dump 17
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client
+          docker pull --quiet postgres:17
+          docker run --rm postgres:17 pg_dump --version
       - name: Exportar e criptografar banco
         shell: bash
         run: |
           set -euo pipefail
           umask 077
-          pg_dump "$DATABASE_URL" --format=custom --no-owner --no-acl --file=/tmp/backup.dump
+          docker run --rm --network host -e DATABASE_URL postgres:17 sh -c 'pg_dump "$DATABASE_URL" --format=custom --no-owner --no-acl' > /tmp/backup.dump
           test -s /tmp/backup.dump
           openssl enc -aes-256-cbc -salt -pbkdf2 -iter 200000 -in /tmp/backup.dump -out backup-supabase.dump.enc -pass env:BACKUP_PASSPHRASE
           rm -f /tmp/backup.dump
