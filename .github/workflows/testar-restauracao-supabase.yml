@@ -1,0 +1,68 @@
+name: Testar restauracao do backup Supabase
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  testar-restauracao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+    steps:
+      - name: Validar secrets
+        shell: bash
+        run: |
+          test -n "$DATABASE_URL" || { echo "::error::SUPABASE_DB_URL ausente"; exit 1; }
+          test -n "$BACKUP_PASSPHRASE" || { echo "::error::BACKUP_ENCRYPTION_PASSPHRASE ausente"; exit 1; }
+      - name: Preparar PostgreSQL 17
+        run: docker pull --quiet postgres:17
+      - name: Criar backup e testar descriptografia
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          docker run --rm --network host -e DATABASE_URL postgres:17 sh -c 'pg_dump "$DATABASE_URL" --format=custom --no-owner --no-acl' > /tmp/teste-backup.dump
+          test -s /tmp/teste-backup.dump
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 200000 -in /tmp/teste-backup.dump -out /tmp/teste-backup.dump.enc -pass env:BACKUP_PASSPHRASE
+          rm -f /tmp/teste-backup.dump
+          openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 200000 -in /tmp/teste-backup.dump.enc -out /tmp/teste-restauracao.dump -pass env:BACKUP_PASSPHRASE
+          docker run --rm -v /tmp:/backups:ro postgres:17 pg_restore --list /backups/teste-restauracao.dump > /tmp/lista-backup.txt
+          test -s /tmp/lista-backup.txt
+      - name: Iniciar banco temporario isolado
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker network create restore-test
+          docker run -d --name pg-restore-test --network restore-test -e POSTGRES_PASSWORD=temporary-only -e POSTGRES_DB=restoretest postgres:17
+          for i in $(seq 1 40); do
+            if docker exec pg-restore-test pg_isready -U postgres -d restoretest >/dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          docker logs pg-restore-test
+          exit 1
+      - name: Restaurar no banco temporario
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Restauracao parcial deliberada: apenas tabelas e dados do schema public.
+          # O backup Supabase completo inclui objetos gerenciados que nao devem ser
+          # restaurados num Postgres limpo sem a plataforma Supabase.
+          docker run --rm --network restore-test -v /tmp:/backups:ro -e PGPASSWORD=temporary-only postgres:17 \
+            pg_restore -h pg-restore-test -U postgres -d restoretest --no-owner --no-acl \
+            --schema=public --section=pre-data /backups/teste-restauracao.dump
+          docker run --rm --network restore-test -v /tmp:/backups:ro -e PGPASSWORD=temporary-only postgres:17 \
+            pg_restore -h pg-restore-test -U postgres -d restoretest --no-owner --no-acl \
+            --schema=public --section=data /backups/teste-restauracao.dump
+          docker exec pg-restore-test psql -U postgres -d restoretest -v ON_ERROR_STOP=1 \
+            -c "SELECT count(*) AS tabelas_restauradas FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';"
+          test "$(docker exec pg-restore-test psql -U postgres -d restoretest -Atc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'")" -gt 0
+          echo "Teste concluido: tabelas public restauradas em banco temporario."
+      - name: Remover dados temporarios
+        if: always()
+        shell: bash
+        run: |
+          docker rm -f pg-restore-test >/dev/null 2>&1 || true
+          docker network rm restore-test >/dev/null 2>&1 || true
+          rm -f /tmp/teste-backup.dump /tmp/teste-backup.dump.enc /tmp/teste-restauracao.dump /tmp/lista-backup.txt
