@@ -1,0 +1,84 @@
+name: Enviar backups criptografados ao Google Drive
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 7 * * *'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GOOGLE_OAUTH_CLIENT_JSON: ${{ secrets.GOOGLE_OAUTH_CLIENT_JSON }}
+      GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+      GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Validar segredos
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$GOOGLE_OAUTH_CLIENT_JSON" || { echo "::error::Falta GOOGLE_OAUTH_CLIENT_JSON"; exit 1; }
+          test -n "$GOOGLE_OAUTH_REFRESH_TOKEN" || { echo "::error::Falta GOOGLE_OAUTH_REFRESH_TOKEN"; exit 1; }
+      - name: Baixar os ultimos backups criptografados
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/backups
+          python3 - <<'PY'
+          import json,os,subprocess
+          repo=os.environ["GH_REPO"]
+          data=json.loads(subprocess.check_output(["gh","api",f"repos/{repo}/actions/artifacts?per_page=100"]))
+          for prefix,filename in [("supabase-db-","backup-supabase.dump.enc"),("supabase-fotos-","backup-fotos.tar.gz.enc")]:
+              matches=[a for a in data["artifacts"] if a["name"].startswith(prefix) and not a["expired"]]
+              if not matches: raise SystemExit(f"Backup ausente: {prefix}")
+              artifact=max(matches,key=lambda a:a["created_at"])
+              subprocess.run(["gh","run","download",str(artifact["workflow_run"]["id"]),"--name",artifact["name"],"--dir",f"/tmp/backups/{prefix[:-1]}"],check=True)
+              path=f"/tmp/backups/{prefix[:-1]}/{filename}"
+              if not os.path.isfile(path) or os.path.getsize(path)==0: raise SystemExit(f"Arquivo vazio: {path}")
+              print("Backup encontrado:",artifact["name"])
+          PY
+      - name: Enviar arquivos ao Google Drive via OAuth
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,json,urllib.request,urllib.parse,pathlib,datetime
+          raw=json.loads(os.environ["GOOGLE_OAUTH_CLIENT_JSON"])
+          cfg=raw.get("installed") or raw.get("web")
+          if not cfg: raise SystemExit("JSON OAuth invalido")
+          payload=urllib.parse.urlencode({"client_id":cfg["client_id"],"client_secret":cfg["client_secret"],"refresh_token":os.environ["GOOGLE_OAUTH_REFRESH_TOKEN"],"grant_type":"refresh_token"}).encode()
+          req=urllib.request.Request("https://oauth2.googleapis.com/token",data=payload)
+          with urllib.request.urlopen(req,timeout=30) as res: token=json.load(res)["access_token"]
+          def api(method,url,body=None,headers=None):
+              h={"Authorization":"Bearer "+token}
+              if headers: h.update(headers)
+              req=urllib.request.Request(url,data=body,headers=h,method=method)
+              with urllib.request.urlopen(req,timeout=120) as res: return json.load(res)
+          base="https://www.googleapis.com/drive/v3/files"
+          folder=os.environ.get("GOOGLE_DRIVE_FOLDER_ID","").strip()
+          if folder:
+              # drive.file só pode usar uma pasta preexistente se ela tiver sido autorizada ao aplicativo.
+              try: api("GET",base+"/"+urllib.parse.quote(folder)+"?fields=id,name")
+              except Exception as exc: raise SystemExit("Pasta nao autorizada para drive.file. Use pasta criada pelo aplicativo ou autorize-a via Google Picker.") from exc
+          else:
+              q=urllib.parse.urlencode({"q":"name = 'Lucia Jacinta Backups (automaticos)' and mimeType = 'application/vnd.google-apps.folder' and trashed = false","fields":"files(id,name),nextPageToken","page_size":100})
+              found=api("GET",base+"?"+q)["files"]
+              if found: folder=found[0]["id"]
+              else:
+                  obj={"name":"Lucia Jacinta Backups (automaticos)","mimeType":"application/vnd.google-apps.folder"}
+                  folder=api("POST",base+"?fields=id",json.dumps(obj).encode(),{"Content-Type":"application/json"})["id"]
+              print("Pasta gerenciada pelo aplicativo:",folder)
+          stamp=datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d-%H%M%S")
+          for file in [pathlib.Path("/tmp/backups/supabase-db/backup-supabase.dump.enc"),pathlib.Path("/tmp/backups/supabase-fotos/backup-fotos.tar.gz.enc")]:
+              metadata={"name":stamp+"-"+file.name,"parents":[folder]}
+              boundary="backup_boundary_2026"
+              raw=file.read_bytes()
+              body=(f"--{boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n".encode()+json.dumps(metadata).encode()+f"\r\n--{boundary}\r\nContent-Type: application/octet-stream\r\n\r\n".encode()+raw+f"\r\n--{boundary}--\r\n".encode())
+              uploaded=api("POST","https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,size",body,{"Content-Type":"multipart/related; boundary="+boundary})
+              if int(uploaded.get("size",0))!=len(raw): raise SystemExit("Tamanho enviado nao confere")
+              print("Enviado:",uploaded["name"],uploaded["size"],"bytes")
+          PY
