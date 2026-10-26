@@ -9,7 +9,29 @@
 function show(symbol,title,message,detail=''){const el=$('symbol');if(symbol==='✅'){el.classList.add('payment-approved');el.innerHTML='<span class="payment-check" aria-label="Pagamento confirmado">✓</span>'}else{el.classList.remove('payment-approved');el.textContent=symbol;}$('title').textContent=title;$('message').textContent=message;$('detail').textContent=detail}
 
 function orderDetails(){try{return JSON.parse(sessionStorage.getItem('lj-detalhes-pedido-'+id)||'null')}catch{return null}}
-function confirmedDetails(){const d=orderDetails();if(!d)return;const a=d.endereco||{},c=d.cliente||{};const addr=[a.logradouro,a.numero,a.complemento,a.bairro,a.cidade,a.uf,a.cep?'CEP '+a.cep:''].filter(Boolean).join(', ');const products=(d.items||[]).map(p=>p.quantity+'x '+p.nome+' — '+Number(p.preco||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})).join('\n');const lines=['Pedido: '+id,'Cliente: '+(c.nome||'Não informado'),'WhatsApp: '+(c.telefone||'Não informado'),'E-mail: '+(c.email||'Não informado'),'Produtos:',products||'Não informado','Endereço: '+(addr||'Não informado'),'Referência/observações: '+(a.observacoes||'Nenhuma'),'Pagamento: APROVADO pelo Mercado Pago'];$('orderSummaryContent').textContent=lines.join('\n');$('orderSummary').hidden=false;const message='Olá! Meu pagamento foi confirmado na Lúcia Jacinta Crochê. Seguem os dados da encomenda:\n\n'+lines.join('\n');$('contactStore').href='https://wa.me/5561994022266?text='+encodeURIComponent(message)}
+function confirmedDetails(){
+ const d=orderDetails();if(!d)return;
+ const a=d.endereco||{},c=d.cliente||{};
+ const address=[a.logradouro,a.numero,a.complemento,a.bairro,a.cidade,a.uf,a.cep?'CEP '+a.cep:''].filter(Boolean).join(', ')||'Não informado';
+ const products=(d.items||[]).map(p=>'• '+(p.quantity||1)+'x '+p.nome+' — '+Number(p.preco||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})).join('\\n')||'Não informado';
+ const sections=[
+ '🧶 *LÚCIA JACINTA CROCHÊ*',
+ '✅ *PAGAMENTO CONFIRMADO*',
+ 'Olá! Acabei de finalizar minha compra. Seguem os dados da encomenda:',
+ '🧾 *PEDIDO*\\n'+id,
+ '👤 *DADOS DO CLIENTE*\\nNome: '+(c.nome||'Não informado')+'\\nWhatsApp: '+(c.telefone||'Não informado')+'\\nE-mail: '+(c.email||'Não informado'),
+ '🛍️ *PRODUTOS*\\n'+products,
+ '📍 *ENDEREÇO DE ENTREGA*\\n'+address,
+ '📝 *REFERÊNCIA / OBSERVAÇÕES*\\n'+(a.observacoes||'Nenhuma'),
+ '💳 *PAGAMENTO*\\nAprovado pelo Mercado Pago',
+ 'Obrigada(o)! Aguardo a confirmação da encomenda. 💕'
+ ];
+ const message=sections.join('\\n\\n');
+ $('orderSummaryContent').textContent=message.replace(/\\*/g,'');
+ $('orderSummary').hidden=false;
+ $('contactStore').href='https://wa.me/5561994022266?text='+encodeURIComponent(message);
+}
+
 if(!valid){show('🧾','Consulte seu pagamento','Não encontramos o identificador do pedido neste navegador. Se você pagou, consulte a compra no Mercado Pago ou fale com a loja.');return}
 async function check(){try{const r=await fetch('/api/status-pedido?id='+encodeURIComponent(id),{cache:'no-store'});if(!r.ok)throw Error('Falha na consulta');const data=await r.json();if(data.status==='approved'){show('✅','Pagamento confirmado!','Seu pagamento foi aprovado pelo Mercado Pago. Obrigado por comprar na Lúcia Jacinta Crochê!');sessionStorage.removeItem('lj-pedido-atual');localStorage.removeItem('lj-cart-v35');confirmedDetails();return}if(data.status==='rejected'||data.status==='cancelled'){show('⚠️','Pagamento não aprovado','O pagamento foi recusado ou cancelado. Você pode voltar à loja e tentar novamente.');return}if(data.status==='refunded'){show('↩️','Pagamento devolvido','O pagamento foi estornado. Entre em contato com a loja.');return}show('⏳','Aguardando confirmação do pagamento','Seu pedido foi registrado. Assim que o Mercado Pago confirmar o pagamento, esta tela será atualizada automaticamente.')}catch{show('⏳','Verificando pagamento','Não foi possível consultar a confirmação agora. Você pode aguardar ou consultar sua compra no Mercado Pago.')}
 if(++count<120)setTimeout(check,5000);else $('detail').textContent='Se a confirmação demorar, consulte seu pagamento no Mercado Pago ou entre em contato com a loja.'}
