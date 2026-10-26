@@ -61,6 +61,10 @@ export async function onRequestPost({ request, env }) {
       return json({ error: "Sacola inválida." }, 400);
     }
 
+    const cliente = body?.cliente || {}; const endereco = body?.endereco || {}; const str=(x,max)=>typeof x==='string'&&x.trim().length<=max?x.trim():null;
+    const nome=str(cliente.nome,120), telefone=str(cliente.telefone,20), email=str(cliente.email||'',180);
+    const cep=str(endereco.cep,8), uf=str(endereco.uf,2), cidade=str(endereco.cidade,100), bairro=str(endereco.bairro,100), logradouro=str(endereco.logradouro,160), numero=str(endereco.numero,20), complemento=str(endereco.complemento||'',120), observacoes=str(endereco.observacoes||'',400);
+    if(!nome||nome.length<3||!telefone||telefone.replace(/\D/g,'').length<10||email===null||(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))||!cep||!/^\d{8}$/.test(cep)||!uf||!/^[A-Z]{2}$/.test(uf)||!cidade||!bairro||!logradouro||!numero||complemento===null||observacoes===null)return json({error:'Preencha os dados do cliente e o endereço completo.'},400);
     const quantities = new Map();
 
     for (const item of body.items) {
@@ -187,7 +191,11 @@ export async function onRequestPost({ request, env }) {
           id: orderId,
           status: "pending",
           total_cents: total,
-          items: lines
+          items: lines,
+          cliente_nome: nome,
+          cliente_email: email || null,
+          cliente_telefone: telefone,
+          entrega_endereco: {cep,uf,cidade,bairro,logradouro,numero,complemento,observacoes}
         })
       }
     );
