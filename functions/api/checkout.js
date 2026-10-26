@@ -21,6 +21,10 @@ function supabaseHeaders(secret, extra = {}) {
   return headers;
 }
 
+export function onRequestGet({ env }) {
+  return json({ enabled: env.ENABLE_ONLINE_PAYMENTS === "true" && !!env.MERCADOPAGO_ACCESS_TOKEN && !!env.SUPABASE_SECRET_KEY && !!env.SUPABASE_URL });
+}
+
 export async function onRequestPost({ request, env }) {
   try {
     if (env.ENABLE_ONLINE_PAYMENTS !== "true") {
