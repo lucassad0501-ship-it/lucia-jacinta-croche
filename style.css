@@ -292,7 +292,7 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 
 /* Botao animado de acompanhamento: brilho verde circular e seta oscilante */
 .header .track-animated{position:relative;isolation:isolate;overflow:hidden;gap:7px;border:1px solid #e4c8d3;background:linear-gradient(120deg,#fff6fa,#fffdfd);color:#76354f;box-shadow:0 2px 10px #67304a18;animation:trackButtonFloat 2.6s ease-in-out infinite}
-.header .track-animated .track-orbit{position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 25%,#3be46a 35%,#9cffaa 41%,transparent 51% 75%,#42e872 85%,transparent 96%);animation:trackOrbitSpin 3s linear infinite;opacity:.8}
+.header .track-animated .track-orbit{position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 25%,#3be46a 35%,#9cffaa 41%,transparent 51% 75%,#42e872 85%,transparent 96%);animation:trackGlowPulse 2.2s ease-in-out infinite;opacity:.45}
 .header .track-animated:before{content:'';position:absolute;inset:3px;border-radius:inherit;background:linear-gradient(125deg,#fff8fb,#fff);z-index:-1}
 .header .track-animated .track-pin{font-size:18px;filter:drop-shadow(0 1px 2px #a95677aa);animation:trackPinFloat 2s ease-in-out infinite}
 .header .track-animated .track-text{white-space:nowrap}
@@ -305,3 +305,8 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 @media(prefers-reduced-motion:reduce){.header .track-animated,.header .track-animated .track-orbit,.header .track-animated .track-pin,.header .track-animated .track-arrow{animation:none}}
 
 .header .track-animated .track-pin-image{display:block;width:34px;height:34px;flex:0 0 34px;object-fit:contain;filter:drop-shadow(0 2px 2px #a9567766)}
+
+/* Brilho verde pulsante, sem girar */
+@keyframes trackGlowPulse{0%,100%{opacity:.15;filter:blur(4px);transform:scale(.96)}50%{opacity:.85;filter:blur(1px);transform:scale(1.04)}}
+.header .track-animated .track-orbit{inset:-6px;background:radial-gradient(ellipse at center,transparent 49%,#5cff85 68%,#37d865 80%,transparent 95%);border-radius:inherit;animation:trackGlowPulse 2.2s ease-in-out infinite;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.header .track-animated .track-orbit{animation:none;opacity:.35}}
