@@ -216,9 +216,9 @@ export async function onRequestPost({ request, env }) {
       notification_url:
         origin + "/api/mercadopago-webhook",
       back_urls: {
-        success: origin + "/pagamento.html",
-        failure: origin + "/pagamento.html",
-        pending: origin + "/pagamento.html"
+        success: origin + "/pagamento.html?order_id=" + encodeURIComponent(orderId),
+        failure: origin + "/pagamento.html?order_id=" + encodeURIComponent(orderId),
+        pending: origin + "/pagamento.html?order_id=" + encodeURIComponent(orderId)
       },
       auto_return: "approved",
       statement_descriptor: "LUCIA JACINTA"
