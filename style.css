@@ -303,3 +303,5 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 @keyframes trackPinFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
 @keyframes trackButtonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @media(prefers-reduced-motion:reduce){.header .track-animated,.header .track-animated .track-orbit,.header .track-animated .track-pin,.header .track-animated .track-arrow{animation:none}}
+
+.header .track-animated .track-pin-image{display:block;width:34px;height:34px;flex:0 0 34px;object-fit:contain;filter:drop-shadow(0 2px 2px #a9567766)}
