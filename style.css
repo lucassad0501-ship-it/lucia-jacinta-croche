@@ -289,3 +289,17 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .header .brand span{min-width:0;overflow:hidden}
 @media(max-width:750px){.header{height:auto;min-height:104px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand brand" "tracking cart";gap:9px 12px;padding:12px 18px;align-items:center}.header .brand{grid-area:brand;width:100%;gap:10px}.header .brand img{width:48px;height:48px;flex:0 0 48px}.header .brand strong{font-size:clamp(20px,5.4vw,28px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.header .brand small{font-size:9px;letter-spacing:1.6px;white-space:nowrap}.header .track-link{grid-area:tracking;justify-self:start;margin:0;padding:9px 13px;font-size:13px}.header .bag{grid-area:cart;justify-self:end;padding:7px 11px;font-size:14px}.header .bag b{min-width:30px;height:30px}.hero{padding-top:38px}}
 @media(max-width:350px){.header{padding:10px 12px;column-gap:6px}.header .track-link{font-size:12px;padding:8px}.header .brand strong{font-size:19px}}
+
+/* Botao animado de acompanhamento: brilho verde circular e seta oscilante */
+.header .track-animated{position:relative;isolation:isolate;overflow:hidden;gap:7px;border:1px solid #e4c8d3;background:linear-gradient(120deg,#fff6fa,#fffdfd);color:#76354f;box-shadow:0 2px 10px #67304a18;animation:trackButtonFloat 2.6s ease-in-out infinite}
+.header .track-animated .track-orbit{position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 25%,#3be46a 35%,#9cffaa 41%,transparent 51% 75%,#42e872 85%,transparent 96%);animation:trackOrbitSpin 3s linear infinite;opacity:.8}
+.header .track-animated:before{content:'';position:absolute;inset:3px;border-radius:inherit;background:linear-gradient(125deg,#fff8fb,#fff);z-index:-1}
+.header .track-animated .track-pin{font-size:18px;filter:drop-shadow(0 1px 2px #a95677aa);animation:trackPinFloat 2s ease-in-out infinite}
+.header .track-animated .track-text{white-space:nowrap}
+.header .track-animated .track-arrow{font-size:18px;font-weight:900;color:#238b46;display:inline-block;animation:trackArrowMove 1.5s ease-in-out infinite alternate}
+.header .track-animated:hover{box-shadow:0 0 16px #52e67b88}
+@keyframes trackOrbitSpin{to{transform:rotate(360deg)}}
+@keyframes trackArrowMove{from{transform:translateX(-3px)}to{transform:translateX(5px)}}
+@keyframes trackPinFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
+@keyframes trackButtonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media(prefers-reduced-motion:reduce){.header .track-animated,.header .track-animated .track-orbit,.header .track-animated .track-pin,.header .track-animated .track-arrow{animation:none}}
