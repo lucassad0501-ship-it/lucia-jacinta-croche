@@ -281,3 +281,11 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 @keyframes ljBasketSway{0%,100%{transform:translateX(-3px) rotate(-6deg)}50%{transform:translateX(4px) rotate(6deg)}}
 @keyframes ljTitleGlide{0%,100%{transform:translateX(-2px)}50%{transform:translateX(4px)}}
 @media(prefers-reduced-motion:reduce){.cart-head-icon,.cart-head h2{animation:none;will-change:auto}}
+
+/* V5.0: navegacao de acompanhamento responsiva sem sobrepor a marca */
+.header .track-link{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:0;padding:11px 14px;border:1px solid #eadfe3;border-radius:28px;text-decoration:none;font-size:14px;font-weight:700;color:#8a4860;background:#fff6f9;white-space:nowrap;line-height:1.2;transition:background .2s,transform .2s}
+.header .track-link:hover{background:#f5e4ea;transform:translateY(-1px)}
+.header .brand{flex:1 1 auto;overflow:hidden}
+.header .brand span{min-width:0;overflow:hidden}
+@media(max-width:750px){.header{height:auto;min-height:104px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand brand" "tracking cart";gap:9px 12px;padding:12px 18px;align-items:center}.header .brand{grid-area:brand;width:100%;gap:10px}.header .brand img{width:48px;height:48px;flex:0 0 48px}.header .brand strong{font-size:clamp(20px,5.4vw,28px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.header .brand small{font-size:9px;letter-spacing:1.6px;white-space:nowrap}.header .track-link{grid-area:tracking;justify-self:start;margin:0;padding:9px 13px;font-size:13px}.header .bag{grid-area:cart;justify-self:end;padding:7px 11px;font-size:14px}.header .bag b{min-width:30px;height:30px}.hero{padding-top:38px}}
+@media(max-width:350px){.header{padding:10px 12px;column-gap:6px}.header .track-link{font-size:12px;padding:8px}.header .brand strong{font-size:19px}}
