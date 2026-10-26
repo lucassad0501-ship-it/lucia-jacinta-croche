@@ -223,3 +223,13 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 #customerDetails>div>input{min-width:0;width:100%;max-width:100%}
 #customerDetails textarea{resize:vertical;white-space:normal;overflow-wrap:break-word}
 @media(max-width:420px){#customerDetails>div{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important}#customerDetails input,#customerDetails textarea{font-size:16px;padding:12px 10px}#customerDetails{gap:10px!important}}
+
+/* Sacola: formulario rolavel e acoes sempre visiveis no rodape */
+.cart-panel{min-height:0;overflow:hidden}
+.cart-head{flex:0 0 auto}
+.cart-footer{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:0;padding-bottom:max(24px,env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+#cartItems{flex:0 1 auto;min-height:0;max-height:24vh;overflow-y:auto}
+.cart-footer #customerDetails{padding-bottom:12px!important}
+.cart-footer #checkoutOnline,.cart-footer #checkout{position:relative;display:block;width:100%;margin-top:10px}
+.cart-footer #checkoutOnline[hidden]{display:none}
+@media(max-width:700px){.cart-panel{height:100dvh;max-height:100dvh}.cart-head{padding:16px 20px}.cart-footer{padding:16px 20px max(26px,env(safe-area-inset-bottom))}#cartItems{padding:10px 20px;max-height:18vh}}
