@@ -273,3 +273,11 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .cart-item-actions .cart-remove{min-width:0;color:#8a4860;font-weight:600;padding:7px 14px;white-space:nowrap}
 @media(max-width:380px){.cart-item-actions{gap:7px}.cart-quantity{gap:6px}.cart-item-actions button{min-width:40px;height:42px;padding:6px 9px}.cart-item-actions .cart-remove{padding:6px 10px}.cart-head-icon{width:34px;height:34px;flex-basis:34px}}
 @media(prefers-reduced-motion:reduce){.cart-head .icon-btn,.cart-item-actions button{transition:none}}
+
+/* V4.9: movimento suave e continuo da cestinha e titulo */
+.cart-head{overflow:hidden}
+.cart-head-icon{will-change:transform;animation:ljBasketSway 2.4s ease-in-out infinite;transform-origin:50% 85%}
+.cart-head h2{animation:ljTitleGlide 2.8s ease-in-out infinite;transform-origin:left center;will-change:transform}
+@keyframes ljBasketSway{0%,100%{transform:translateX(-3px) rotate(-6deg)}50%{transform:translateX(4px) rotate(6deg)}}
+@keyframes ljTitleGlide{0%,100%{transform:translateX(-2px)}50%{transform:translateX(4px)}}
+@media(prefers-reduced-motion:reduce){.cart-head-icon,.cart-head h2{animation:none;will-change:auto}}
