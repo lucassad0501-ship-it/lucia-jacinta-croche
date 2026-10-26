@@ -214,3 +214,12 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 @media(max-width:700px){.hero-announcement{min-height:235px}.hero-dots{margin-top:5px}}
 @media(max-width:380px){.hero-announcement{min-height:270px}}
 @media(prefers-reduced-motion:reduce){.hero-message-in{animation:none}.hero-dots button{transition:none}}
+
+/* Checkout mobile: campos sempre contidos na sacola */
+#customerDetails{width:100%;min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+#customerDetails *,#customerDetails *::before,#customerDetails *::after{box-sizing:border-box}
+#customerDetails input,#customerDetails textarea{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;font:inherit}
+#customerDetails>div{min-width:0;width:100%;max-width:100%}
+#customerDetails>div>input{min-width:0;width:100%;max-width:100%}
+#customerDetails textarea{resize:vertical;white-space:normal;overflow-wrap:break-word}
+@media(max-width:420px){#customerDetails>div{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important}#customerDetails input,#customerDetails textarea{font-size:16px;padding:12px 10px}#customerDetails{gap:10px!important}}
