@@ -13,20 +13,20 @@ function confirmedDetails(){
  const d=orderDetails();if(!d)return;
  const a=d.endereco||{},c=d.cliente||{};
  const address=[a.logradouro,a.numero,a.complemento,a.bairro,a.cidade,a.uf,a.cep?'CEP '+a.cep:''].filter(Boolean).join(', ')||'Não informado';
- const products=(d.items||[]).map(p=>'• '+(p.quantity||1)+'x '+p.nome+' — '+Number(p.preco||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})).join('\\n')||'Não informado';
+ const products=(d.items||[]).map(p=>'• '+(p.quantity||1)+'x '+p.nome+' — '+Number(p.preco||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})).join('\n')||'Não informado';
  const sections=[
  '🧶 *LÚCIA JACINTA CROCHÊ*',
  '✅ *PAGAMENTO CONFIRMADO*',
  'Olá! Acabei de finalizar minha compra. Seguem os dados da encomenda:',
- '🧾 *PEDIDO*\\n'+id,
- '👤 *DADOS DO CLIENTE*\\nNome: '+(c.nome||'Não informado')+'\\nWhatsApp: '+(c.telefone||'Não informado')+'\\nE-mail: '+(c.email||'Não informado'),
- '🛍️ *PRODUTOS*\\n'+products,
- '📍 *ENDEREÇO DE ENTREGA*\\n'+address,
- '📝 *REFERÊNCIA / OBSERVAÇÕES*\\n'+(a.observacoes||'Nenhuma'),
- '💳 *PAGAMENTO*\\nAprovado pelo Mercado Pago',
+ '🧾 *PEDIDO*\n'+id,
+ '👤 *DADOS DO CLIENTE*\nNome: '+(c.nome||'Não informado')+'\nWhatsApp: '+(c.telefone||'Não informado')+'\nE-mail: '+(c.email||'Não informado'),
+ '🛍️ *PRODUTOS*\n'+products,
+ '📍 *ENDEREÇO DE ENTREGA*\n'+address,
+ '📝 *REFERÊNCIA / OBSERVAÇÕES*\n'+(a.observacoes||'Nenhuma'),
+ '💳 *PAGAMENTO*\nAprovado pelo Mercado Pago',
  'Obrigada(o)! Aguardo a confirmação da encomenda. 💕'
  ];
- const message=sections.join('\\n\\n');
+ const message=sections.join('\n\n');
  $('orderSummaryContent').textContent=message.replace(/\\*/g,'');
  $('orderSummary').hidden=false;
  $('contactStore').href='https://wa.me/5561994022266?text='+encodeURIComponent(message);
