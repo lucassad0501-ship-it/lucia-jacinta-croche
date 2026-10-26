@@ -315,3 +315,12 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .floating-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;line-height:1;min-width:52px;min-height:52px}
 .floating-whatsapp .whatsapp-symbol{display:block;width:27px;height:27px;flex:0 0 27px;fill:#fff}
 @media(max-width:750px){.floating-whatsapp{width:54px;height:54px;padding:0;right:14px;bottom:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}.floating-whatsapp .whatsapp-symbol{width:29px;height:29px;flex-basis:29px}.floating-whatsapp span{display:none}}
+
+/* Ajuste final: WhatsApp centralizado e brilho rose sem rotacao */
+.floating-whatsapp{background:#b65b7d!important;color:#fff!important;box-shadow:0 7px 22px #a4477070!important;overflow:visible}
+.floating-whatsapp .whatsapp-symbol{display:block;width:30px;height:30px;flex:0 0 30px;stroke:#fff;fill:none;transform:none}
+.floating-whatsapp:hover{background:#a24c70!important;box-shadow:0 8px 25px #a4477088!important}
+.header .track-animated .track-orbit{background:radial-gradient(ellipse at center,transparent 45%,#f8aac8 68%,#d95b90 81%,transparent 96%)!important;animation:trackGlowPulse 2.2s ease-in-out infinite!important}
+.header .track-animated .track-arrow{color:#b44b78}
+.header .track-animated:hover{box-shadow:0 0 16px #e9a0be88}
+@media(prefers-reduced-motion:reduce){.header .track-animated .track-orbit{animation:none!important}}
