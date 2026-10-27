@@ -351,3 +351,12 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .floating-instagram:focus-visible{outline:3px solid #552047;outline-offset:3px}
 @media(max-width:750px){.floating-instagram{right:14px;bottom:84px;width:54px;height:54px}}
 @media(prefers-reduced-motion:reduce){.floating-instagram{transition:none}}
+
+/* Imagem do anuncio em quadro acima do texto; logotipo permanece abaixo */
+.hero-banner-image[hidden]{display:none!important}
+.hero-banner-image{width:100%;max-width:660px;margin:0 0 22px;overflow:hidden;border-radius:20px;border:2px solid #f3cbd9;background:#fff;box-shadow:0 10px 30px #b1768920}
+.hero-banner-image img{display:block;width:100%;max-height:340px;aspect-ratio:16/9;object-fit:contain;background:#fff}
+.hero-banner-enter{animation:bannerReveal .55s ease both}
+@keyframes bannerReveal{from{opacity:.3;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:750px){.hero-banner-image{max-width:100%;margin-bottom:18px;border-radius:16px}.hero-banner-image img{max-height:260px}}
+@media(prefers-reduced-motion:reduce){.hero-banner-enter{animation:none}}
