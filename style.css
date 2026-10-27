@@ -344,3 +344,10 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .admin-tabs .admin-tab:focus-visible{outline:3px solid #99536c;outline-offset:3px}
 @media(max-width:760px){.admin-tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 20px}.admin-tabs .admin-tab{flex-direction:column;gap:7px;min-height:100px;padding:11px 5px;border-radius:14px;font-size:clamp(10px,2.9vw,14px);overflow-wrap:anywhere}.admin-tabs .admin-tab-icon{font-size:clamp(25px,7vw,38px)}}
 @media(prefers-reduced-motion:reduce){.admin-tabs .admin-tab{transition:none}}
+
+/* Instagram flutuante acima do WhatsApp */
+.floating-instagram{position:fixed;right:18px;bottom:91px;z-index:8;display:flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#833ab4,#c13584 48%,#e1306c 76%,#f77737);color:#fff;text-decoration:none;box-shadow:0 7px 22px #a4477070;transition:transform .2s ease,box-shadow .2s ease}
+.floating-instagram:hover{transform:translateY(-3px);box-shadow:0 10px 25px #a4477088}
+.floating-instagram:focus-visible{outline:3px solid #552047;outline-offset:3px}
+@media(max-width:750px){.floating-instagram{right:14px;bottom:84px;width:54px;height:54px}}
+@media(prefers-reduced-motion:reduce){.floating-instagram{transition:none}}
