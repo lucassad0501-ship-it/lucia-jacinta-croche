@@ -1,3 +1,23 @@
+const originAddress='Quadra 116, Lote 15, Vila Maria Auxiliadora, Santo Antônio do Descoberto, GO, 72900-148, Brasil';
+function destinationAddress(a){return [a.logradouro,a.numero,a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')}
+async function calculateShipping(env,a){
+ if(!env.GOOGLE_MAPS_API_KEY)return {ok:false,status:503,error:'Cálculo automático de frete ainda não configurado. Selecione retirada ou entre em contato com a loja.'};
+ const url=String(env.SUPABASE_URL||'').replace(/\\/+$/,'')+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max';
+ const cfgRes=await fetch(url,{headers:supabaseHeaders(env.SUPABASE_SECRET_KEY)});
+ if(!cfgRes.ok)return {ok:false,status:503,error:'Não foi possível consultar o frete.'};
+ const cfg=(await cfgRes.json())[0];
+ if(!cfg)return {ok:false,status:503,error:'Configuração do frete indisponível.'};
+ const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters'},body:JSON.stringify({origin:{address:originAddress},destination:{address:destinationAddress(a)},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
+ if(!routeRes.ok)return {ok:false,status:503,error:'Não foi possível calcular a rota de entrega. Confira o endereço ou tente novamente.'};
+ const result=await routeRes.json();const meters=result.routes?.[0]?.distanceMeters;
+ if(!Number.isFinite(meters)||meters<=0)return {ok:false,status:422,error:'Rota de entrega não encontrada para este endereço.'};
+ const km=Math.ceil(meters/1000);
+ if(km>cfg.km_max)return {ok:false,status:422,error:'Endereço fora do limite de entrega de '+cfg.km_max+' km. Entre em contato com a loja.'};
+ const frete_cents=cfg.taxa_base_cents+km*cfg.valor_km_cents;
+ if(!Number.isSafeInteger(frete_cents)||frete_cents<0)return {ok:false,status:503,error:'Falha no cálculo do frete.'};
+ return {ok:true,km,frete_cents};
+}
+export async function onRequestPostQuote({request,env}){return json({error:'Método indisponível'},405)}
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -21,6 +41,7 @@ function supabaseHeaders(secret, extra = {}) {
   return headers;
 }
 
+export async function onRequestOptions(){return json({error:'Método indisponível'},405)}
 export function onRequestGet({ env }) {
   return json({ enabled: env.ENABLE_ONLINE_PAYMENTS === "true" && !!env.MERCADOPAGO_ACCESS_TOKEN && !!env.SUPABASE_SECRET_KEY && !!env.SUPABASE_URL });
 }
@@ -177,17 +198,14 @@ export async function onRequestPost({ request, env }) {
     if(endereco.modalidade!=='retirada'&&endereco.modalidade!=='entrega')return json({error:'Modalidade de entrega inválida.'},400);
     let freteCents=0,kmInformado=0;
     if(!retirada){
-      kmInformado=Number(endereco.km_informado);
-      const cfgResponse=await fetch(supabaseUrl+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max',{headers:dbHeaders});
-      if(!cfgResponse.ok)return json({error:'Frete temporariamente indisponível.'},503);
-      const cfg=(await cfgResponse.json())[0];
-      if(!cfg||!Number.isSafeInteger(kmInformado)||kmInformado<1||kmInformado>cfg.km_max)return json({error:'Selecione uma distância válida para a entrega.'},400);
-      freteCents=cfg.taxa_base_cents+kmInformado*cfg.valor_km_cents;
-      if(!Number.isSafeInteger(freteCents)||freteCents<0)return json({error:'Valor do frete inválido.'},400);
+      const quote=await calculateShipping(env,{cep,uf,cidade,bairro,logradouro,numero,complemento});
+      if(!quote.ok)return json({error:quote.error},quote.status||400);
+      kmInformado=quote.km;
+      freteCents=quote.frete_cents;
     }
     total+=freteCents;
     if(total>100000000)return json({error:'Valor total inválido.'},400);
-    if(freteCents)lines.push({product_id:null,nome:'Frete de entrega ('+kmInformado+' km informados)',quantity:1,unit_price_cents:freteCents});
+    if(freteCents)lines.push({product_id:null,nome:'Frete de entrega ('+kmInformado+' km por rota)',quantity:1,unit_price_cents:freteCents});
     const orderId = crypto.randomUUID();
     const origin = new URL(request.url).origin;
 
