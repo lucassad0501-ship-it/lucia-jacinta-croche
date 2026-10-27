@@ -1,5 +1,7 @@
 /*
   X-Content-Type-Options: nosniff
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  X-Permitted-Cross-Domain-Policies: none
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   X-Frame-Options: DENY
@@ -8,9 +10,14 @@
 
 /admin.html
   Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow, noarchive
 
 /config.js
   Cache-Control: no-store
+
+/acompanhar.html
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow, noarchive
 
 /*.webmanifest
   Cache-Control: public, max-age=3600
@@ -20,3 +27,4 @@
 
 /api/*
   Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow, noarchive
