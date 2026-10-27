@@ -114,8 +114,7 @@ export async function onRequestPost({ request, env }) {
     if (!productResponse.ok) {
       console.error(
         "Checkout: erro ao consultar produtos.",
-        productResponse.status,
-        await productResponse.text()
+        productResponse.status
       );
 
       return json({
@@ -203,8 +202,7 @@ export async function onRequestPost({ request, env }) {
     if (!insertResponse.ok) {
       console.error(
         "Checkout: erro ao criar pedido.",
-        insertResponse.status,
-        await insertResponse.text()
+        insertResponse.status
       );
 
       return json({
@@ -249,8 +247,7 @@ export async function onRequestPost({ request, env }) {
     if (!mpResponse.ok) {
       console.error(
         "Checkout: erro ao criar preferência Mercado Pago.",
-        mpResponse.status,
-        await mpResponse.text()
+        mpResponse.status
       );
 
       return json({
@@ -303,8 +300,7 @@ export async function onRequestPost({ request, env }) {
     if (!updateResponse.ok) {
       console.error(
         "Checkout: erro ao salvar preferência.",
-        updateResponse.status,
-        await updateResponse.text()
+        updateResponse.status
       );
 
       return json({
@@ -312,10 +308,7 @@ export async function onRequestPost({ request, env }) {
       }, 500);
     }
 
-    console.info(
-      "Checkout: pedido criado com sucesso.",
-      orderId
-    );
+    console.info("Checkout: pedido criado com sucesso.");
 
     return json({
       checkout_url: checkoutUrl,
@@ -323,7 +316,7 @@ export async function onRequestPost({ request, env }) {
     });
 
   } catch (error) {
-    console.error("Checkout: erro inesperado.", error);
+    console.error("Checkout: erro inesperado (detalhes omitidos por privacidade).");
 
     return json({
       error:
