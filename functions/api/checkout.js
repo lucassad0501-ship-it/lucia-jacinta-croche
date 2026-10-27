@@ -1,6 +1,6 @@
 const originAddress='Quadra 116, Lote 15, Vila Maria Auxiliadora, Santo Antônio do Descoberto, GO, 72900-148, Brasil';
 function destinationAddress(a){return [a.logradouro,a.numero,a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')}
-async function calculateShipping(env,a){
+export async function calculateShipping(env,a){
  if(!env.GOOGLE_MAPS_API_KEY)return {ok:false,status:503,error:'Cálculo automático de frete ainda não configurado. Selecione retirada ou entre em contato com a loja.'};
  const url=String(env.SUPABASE_URL||'').replace(/\\/+$/,'')+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max';
  const cfgRes=await fetch(url,{headers:supabaseHeaders(env.SUPABASE_SECRET_KEY)});
@@ -17,7 +17,6 @@ async function calculateShipping(env,a){
  if(!Number.isSafeInteger(frete_cents)||frete_cents<0)return {ok:false,status:503,error:'Falha no cálculo do frete.'};
  return {ok:true,km,frete_cents};
 }
-export async function onRequestPostQuote({request,env}){return json({error:'Método indisponível'},405)}
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -41,7 +40,6 @@ function supabaseHeaders(secret, extra = {}) {
   return headers;
 }
 
-export async function onRequestOptions(){return json({error:'Método indisponível'},405)}
 export function onRequestGet({ env }) {
   return json({ enabled: env.ENABLE_ONLINE_PAYMENTS === "true" && !!env.MERCADOPAGO_ACCESS_TOKEN && !!env.SUPABASE_SECRET_KEY && !!env.SUPABASE_URL });
 }
