@@ -324,3 +324,8 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .header .track-animated .track-arrow{color:#b44b78}
 .header .track-animated:hover{box-shadow:0 0 16px #e9a0be88}
 @media(prefers-reduced-motion:reduce){.header .track-animated .track-orbit{animation:none!important}}
+
+/* Transicao suave ao trocar de anuncio no destaque */
+@keyframes heroMessageIn{0%{opacity:0;transform:translateY(16px) scale(.985);filter:blur(5px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.hero-announcement.hero-message-in{animation:heroMessageIn .72s cubic-bezier(.2,.8,.2,1) both}
+@media(prefers-reduced-motion:reduce){.hero-announcement.hero-message-in{animation:none}}
