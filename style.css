@@ -334,3 +334,13 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 .hero-art img.hero-art-enter{animation:heroArtEnter .75s cubic-bezier(.2,.7,.2,1) both}
 @keyframes heroArtEnter{from{opacity:.35;transform:translateY(12px) scale(.96);filter:blur(5px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
 @media(prefers-reduced-motion:reduce){.hero-art img.hero-art-enter{animation:none}}
+
+/* Abas do painel: referência visual de três cartões rosados */
+.admin-tabs{display:grid;grid-template-columns:1fr 1.36fr 1fr;gap:14px;margin:16px 0 24px;padding:0;background:transparent;border:0;box-shadow:none}
+.admin-tabs .admin-tab{appearance:none;display:flex;align-items:center;justify-content:center;gap:14px;min-width:0;min-height:88px;padding:15px 16px;border:2px solid #f7bfd4;border-radius:20px;background:linear-gradient(145deg,#fff,#fffafb);color:#34272c;font:800 clamp(15px,1.8vw,24px)/1.15 system-ui,-apple-system,sans-serif;box-shadow:0 6px 18px #d37a9b20;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease;text-align:center}
+.admin-tabs .admin-tab-icon{font-size:clamp(30px,3.6vw,52px);line-height:1;flex-shrink:0}
+.admin-tabs .admin-tab[aria-pressed="true"]{border-color:#b17689;background:linear-gradient(135deg,#fff1f6,#fff);box-shadow:0 5px 18px #b1768940}
+.admin-tabs .admin-tab:active{transform:scale(.98)}
+.admin-tabs .admin-tab:focus-visible{outline:3px solid #99536c;outline-offset:3px}
+@media(max-width:760px){.admin-tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 20px}.admin-tabs .admin-tab{flex-direction:column;gap:7px;min-height:100px;padding:11px 5px;border-radius:14px;font-size:clamp(10px,2.9vw,14px);overflow-wrap:anywhere}.admin-tabs .admin-tab-icon{font-size:clamp(25px,7vw,38px)}}
+@media(prefers-reduced-motion:reduce){.admin-tabs .admin-tab{transition:none}}
