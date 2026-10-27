@@ -172,6 +172,22 @@ export async function onRequestPost({ request, env }) {
       }, 400);
     }
 
+    // O servidor recalcula o frete; nunca confia no preço informado pelo navegador.
+    const retirada=endereco.modalidade==='retirada';
+    if(endereco.modalidade!=='retirada'&&endereco.modalidade!=='entrega')return json({error:'Modalidade de entrega inválida.'},400);
+    let freteCents=0,kmInformado=0;
+    if(!retirada){
+      kmInformado=Number(endereco.km_informado);
+      const cfgResponse=await fetch(supabaseUrl+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max',{headers:dbHeaders});
+      if(!cfgResponse.ok)return json({error:'Frete temporariamente indisponível.'},503);
+      const cfg=(await cfgResponse.json())[0];
+      if(!cfg||!Number.isSafeInteger(kmInformado)||kmInformado<1||kmInformado>cfg.km_max)return json({error:'Selecione uma distância válida para a entrega.'},400);
+      freteCents=cfg.taxa_base_cents+kmInformado*cfg.valor_km_cents;
+      if(!Number.isSafeInteger(freteCents)||freteCents<0)return json({error:'Valor do frete inválido.'},400);
+    }
+    total+=freteCents;
+    if(total>100000000)return json({error:'Valor total inválido.'},400);
+    if(freteCents)lines.push({product_id:null,nome:'Frete de entrega ('+kmInformado+' km informados)',quantity:1,unit_price_cents:freteCents});
     const orderId = crypto.randomUUID();
     const origin = new URL(request.url).origin;
 
@@ -194,7 +210,7 @@ export async function onRequestPost({ request, env }) {
           cliente_nome: nome,
           cliente_email: email || null,
           cliente_telefone: telefone,
-          entrega_endereco: {cep,uf,cidade,bairro,logradouro,numero,complemento,observacoes}
+          entrega_endereco: {cep,uf,cidade,bairro,logradouro,numero,complemento,observacoes,modalidade:endereco.modalidade,km_informado:kmInformado,frete_cents:freteCents}
         })
       }
     );
