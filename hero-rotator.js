@@ -8,7 +8,7 @@ let slides=[
 ];
 const eyebrow=document.getElementById('heroEyebrow'),headline=document.getElementById('heroHeadline'),description=document.getElementById('heroDescription'),dots=document.getElementById('heroDots');
 if(!eyebrow||!headline||!description||!dots)return;
-const area=document.querySelector('.hero-announcement');
+const area=document.querySelector('.hero-announcement');const art=document.querySelector('.hero-art img');const originalArt=art?.getAttribute('src');
 let current=0,timer=null,paused=false;
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function show(index){
@@ -16,7 +16,7 @@ function show(index){
  const slide=slides[current];
  eyebrow.textContent=slide.eyebrow;
  headline.replaceChildren();const parts=slide.headline.split(/(<em>|<\/em>)/);let emphasis=false;for(const part of parts){if(part==='<em>'){emphasis=true;continue}if(part==='</em>'){emphasis=false;continue}if(emphasis){const em=document.createElement('em');em.textContent=part;headline.append(em)}else headline.append(document.createTextNode(part))}
- description.textContent=slide.description;
+ description.textContent=slide.description;if(art){art.src=slide.image||originalArt;art.alt=slide.image?'Imagem do anúncio '+(current+1):'Lúcia Jacinta Crochê';art.classList.remove('hero-art-enter');void art.offsetWidth;art.classList.add('hero-art-enter')}
  if(area&&!reduced){area.classList.remove('hero-message-in');void area.offsetWidth;area.classList.add('hero-message-in')}
  dots.innerHTML=slides.map((_,i)=>`<button type="button" data-slide="${i}" aria-label="Anúncio ${i+1}"></button>`).join('');
  dots.querySelectorAll('[data-slide]').forEach((button,i)=>{button.classList.toggle('active',i===current);if(i===current)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current')});
@@ -31,5 +31,5 @@ hero?.addEventListener('focusin',()=>{paused=true;stop()});
 hero?.addEventListener('focusout',event=>{if(!hero.contains(event.relatedTarget)){paused=false;start()}});
 document.addEventListener('visibilitychange',start);
 show(0);start();
-(async()=>{try{const client=window.supabase?.createClient?.(window.LUCIA_SUPABASE_URL,window.LUCIA_SUPABASE_ANON_KEY);if(!client)return;const {data,error}=await client.from('anuncios_home').select('id,chamada,titulo,destaque,descricao').eq('ativo',true).order('id');if(error||!data?.length)return;slides=data.map(a=>({eyebrow:a.chamada,headline:a.titulo+(a.destaque?' <em>'+a.destaque+'</em>':''),description:a.descricao}));current=0;show(0);start()}catch(e){console.warn('Anúncios padrão em uso')}})();
+(async()=>{try{const client=window.supabase?.createClient?.(window.LUCIA_SUPABASE_URL,window.LUCIA_SUPABASE_ANON_KEY);if(!client)return;const {data,error}=await client.from('anuncios_home').select('id,chamada,titulo,destaque,descricao,imagem_url').eq('ativo',true).order('id');if(error||!data?.length)return;slides=data.map(a=>({eyebrow:a.chamada,headline:a.titulo+(a.destaque?' <em>'+a.destaque+'</em>':''),description:a.descricao,image:a.imagem_url}));current=0;show(0);start()}catch(e){console.warn('Anúncios padrão em uso')}})();
 })();
