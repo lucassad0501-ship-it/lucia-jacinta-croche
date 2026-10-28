@@ -8,7 +8,12 @@ export async function calculateShipping(env,a){
  const cfg=(await cfgRes.json())[0];
  if(!cfg)return {ok:false,status:503,error:'Configuração do frete indisponível.'};
  const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters'},body:JSON.stringify({origin:{address:originAddress},destination:{address:destinationAddress(a)},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
- if(!routeRes.ok)return {ok:false,status:503,error:'Não foi possível calcular a rota de entrega. Confira o endereço ou tente novamente.'};
+ if(!routeRes.ok){
+   let code='';try{const body=await routeRes.json();code=String(body?.error?.status||'');}catch{}
+   const error=code==='PERMISSION_DENIED'?'O Google recusou a consulta de rotas. Verifique a chave, as restrições da Routes API e o faturamento.':code==='RESOURCE_EXHAUSTED'?'Limite de consultas do Google Maps atingido.':code==='INVALID_ARGUMENT'?'O Google não reconheceu o endereço para calcular a rota. Confira rua, número, cidade e CEP.':'Não foi possível calcular a rota de entrega. Confira a configuração do Google Maps ou o endereço.';
+   console.warn('Routes API falhou',{httpStatus:routeRes.status,category:code||'unknown'});
+   return {ok:false,status:503,error};
+ }
  const result=await routeRes.json();const meters=result.routes?.[0]?.distanceMeters;
  if(!Number.isFinite(meters)||meters<=0)return {ok:false,status:422,error:'Rota de entrega não encontrada para este endereço.'};
  const km=Math.ceil(meters/1000);
