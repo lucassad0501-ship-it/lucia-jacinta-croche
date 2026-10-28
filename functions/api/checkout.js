@@ -1,5 +1,5 @@
 const originAddress='Quadra 116, Lote 15, Vila Maria Auxiliadora, Santo Antônio do Descoberto, GO, 72900-148, Brasil';
-function destinationAddress(a){return [a.logradouro,a.numero,a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')}
+function destinationAddress(a){const street=String(a.logradouro||'').trim();const quadra=/^(?:q(?:d|dr|dra)?\.?\s*|quadra\s*)([0-9]+[a-z]?)$/i.exec(street);const location=quadra?'Quadra '+quadra[1]:street;return [location,a.numero?'Lote '+a.numero:'',a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')}
 export async function calculateShipping(env,a){
  if(!env.GOOGLE_MAPS_API_KEY)return {ok:false,status:503,error:'Cálculo automático de frete ainda não configurado. Selecione retirada ou entre em contato com a loja.'};
  const url=String(env.SUPABASE_URL||'').replace(/\/+$/,'')+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max';
@@ -7,16 +7,12 @@ export async function calculateShipping(env,a){
  if(!cfgRes.ok)return {ok:false,status:503,error:'Não foi possível consultar o frete.'};
  const cfg=(await cfgRes.json())[0];
  if(!cfg)return {ok:false,status:503,error:'Configuração do frete indisponível.'};
- // Quadras e lotes podem não existir no cadastro de endereços do Google.
- // Tenta o endereço completo e, se necessário, a rua/bairro sem o número.
- const candidates=[
-  destinationAddress(a),
-  [a.logradouro,a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')
- ];
+ // Não retirar quadra ou lote da busca: isso pode calcular um frete para outra região.
+ const candidates=[destinationAddress(a)];
  let meters=null,apiError='';
  for(const address of [...new Set(candidates)]){
-  const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters'},body:JSON.stringify({origin:{address:originAddress},destination:{address},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
-  if(routeRes.ok){const result=await routeRes.json();const found=result.routes?.[0]?.distanceMeters;if(Number.isFinite(found)&&found>0){meters=found;break}}
+  const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters,geocodingResults.destination.partialMatch,geocodingResults.destination.type'},body:JSON.stringify({origin:{address:originAddress},destination:{address},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
+  if(routeRes.ok){const result=await routeRes.json();const found=result.routes?.[0]?.distanceMeters;if(Number.isFinite(found)&&found>0&&!result.geocodingResults?.destination?.partialMatch){meters=found;break}}
   else{try{const body=await routeRes.json();apiError=String(body?.error?.status||'')}catch{};console.warn('Routes API falhou',{httpStatus:routeRes.status,category:apiError||'unknown'});if(apiError==='PERMISSION_DENIED'||apiError==='RESOURCE_EXHAUSTED')break}
  }
  if(!Number.isFinite(meters)||meters<=0){
