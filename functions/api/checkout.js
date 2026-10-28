@@ -7,15 +7,22 @@ export async function calculateShipping(env,a){
  if(!cfgRes.ok)return {ok:false,status:503,error:'Não foi possível consultar o frete.'};
  const cfg=(await cfgRes.json())[0];
  if(!cfg)return {ok:false,status:503,error:'Configuração do frete indisponível.'};
- const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters'},body:JSON.stringify({origin:{address:originAddress},destination:{address:destinationAddress(a)},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
- if(!routeRes.ok){
-   let code='';try{const body=await routeRes.json();code=String(body?.error?.status||'');}catch{}
-   const error=code==='PERMISSION_DENIED'?'O Google recusou a consulta de rotas. Verifique a chave, as restrições da Routes API e o faturamento.':code==='RESOURCE_EXHAUSTED'?'Limite de consultas do Google Maps atingido.':code==='INVALID_ARGUMENT'?'O Google não reconheceu o endereço para calcular a rota. Confira rua, número, cidade e CEP.':'Não foi possível calcular a rota de entrega. Confira a configuração do Google Maps ou o endereço.';
-   console.warn('Routes API falhou',{httpStatus:routeRes.status,category:code||'unknown'});
-   return {ok:false,status:503,error};
+ // Quadras e lotes podem não existir no cadastro de endereços do Google.
+ // Tenta o endereço completo e, se necessário, a rua/bairro sem o número.
+ const candidates=[
+  destinationAddress(a),
+  [a.logradouro,a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')
+ ];
+ let meters=null,apiError='';
+ for(const address of [...new Set(candidates)]){
+  const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters'},body:JSON.stringify({origin:{address:originAddress},destination:{address},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
+  if(routeRes.ok){const result=await routeRes.json();const found=result.routes?.[0]?.distanceMeters;if(Number.isFinite(found)&&found>0){meters=found;break}}
+  else{try{const body=await routeRes.json();apiError=String(body?.error?.status||'')}catch{};console.warn('Routes API falhou',{httpStatus:routeRes.status,category:apiError||'unknown'});if(apiError==='PERMISSION_DENIED'||apiError==='RESOURCE_EXHAUSTED')break}
  }
- const result=await routeRes.json();const meters=result.routes?.[0]?.distanceMeters;
- if(!Number.isFinite(meters)||meters<=0)return {ok:false,status:422,error:'Rota de entrega não encontrada para este endereço.'};
+ if(!Number.isFinite(meters)||meters<=0){
+  const error=apiError==='PERMISSION_DENIED'?'O Google recusou a consulta. Verifique a chave, as restrições da Routes API e o faturamento.':apiError==='RESOURCE_EXHAUSTED'?'Limite de consultas do Google Maps atingido.':'Não foi possível identificar uma rota confiável para este endereço. Solicite a entrega pelo WhatsApp para confirmar o frete.';
+  return {ok:false,status:422,error};
+ }
  const km=Math.ceil(meters/1000);
  if(km>cfg.km_max)return {ok:false,status:422,error:'Endereço fora do limite de entrega de '+cfg.km_max+' km. Entre em contato com a loja.'};
  const frete_cents=cfg.taxa_base_cents+km*cfg.valor_km_cents;
