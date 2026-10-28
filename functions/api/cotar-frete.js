@@ -8,6 +8,6 @@ export async function onRequestPost({request,env}){
   if(!/^\d{8}$/.test(address.cep||'')||!address.uf||!address.cidade||!address.bairro||!address.logradouro||!address.numero)return json({error:'Preencha CEP, rua, número, bairro, cidade e UF para calcular o frete.'},400);
   const result=await calculateShipping(env,address);
   if(!result.ok)return json({error:result.error},result.status||400);
-  return json({km:result.km,frete_cents:result.frete_cents});
+  return json({cidade:result.cidade,uf:result.uf,frete_cents:result.frete_cents});
  }catch{return json({error:'Não foi possível calcular o frete.'},400)}
 }
