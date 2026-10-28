@@ -1,29 +1,15 @@
-const originAddress='Quadra 116, Lote 15, Vila Maria Auxiliadora, Santo Antônio do Descoberto, GO, 72900-148, Brasil';
-function destinationAddress(a){const street=String(a.logradouro||'').trim();const quadra=/^(?:q(?:d|dr|dra)?\.?\s*|quadra\s*)([0-9]+[a-z]?)$/i.exec(street);const location=quadra?'Quadra '+quadra[1]:street;return [location,a.numero?'Lote '+a.numero:'',a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')}
+const cityKey=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocaleLowerCase('pt-BR').replace(/\s+/g,' ');
 export async function calculateShipping(env,a){
- if(!env.GOOGLE_MAPS_API_KEY)return {ok:false,status:503,error:'Cálculo automático de frete ainda não configurado. Selecione retirada ou entre em contato com a loja.'};
- const url=String(env.SUPABASE_URL||'').replace(/\/+$/,'')+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max';
- const cfgRes=await fetch(url,{headers:supabaseHeaders(env.SUPABASE_SECRET_KEY)});
- if(!cfgRes.ok)return {ok:false,status:503,error:'Não foi possível consultar o frete.'};
- const cfg=(await cfgRes.json())[0];
- if(!cfg)return {ok:false,status:503,error:'Configuração do frete indisponível.'};
- // Não retirar quadra ou lote da busca: isso pode calcular um frete para outra região.
- const candidates=[destinationAddress(a)];
- let meters=null,apiError='';
- for(const address of [...new Set(candidates)]){
-  const routeRes=await fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':env.GOOGLE_MAPS_API_KEY,'X-Goog-FieldMask':'routes.distanceMeters,geocodingResults.destination.partialMatch,geocodingResults.destination.type'},body:JSON.stringify({origin:{address:originAddress},destination:{address},travelMode:'DRIVE',routingPreference:'TRAFFIC_UNAWARE',languageCode:'pt-BR',units:'METRIC'})});
-  if(routeRes.ok){const result=await routeRes.json();const found=result.routes?.[0]?.distanceMeters;if(Number.isFinite(found)&&found>0&&!result.geocodingResults?.destination?.partialMatch){meters=found;break}}
-  else{try{const body=await routeRes.json();apiError=String(body?.error?.status||'')}catch{};console.warn('Routes API falhou',{httpStatus:routeRes.status,category:apiError||'unknown'});if(apiError==='PERMISSION_DENIED'||apiError==='RESOURCE_EXHAUSTED')break}
- }
- if(!Number.isFinite(meters)||meters<=0){
-  const error=apiError==='PERMISSION_DENIED'?'O Google recusou a consulta. Verifique a chave, as restrições da Routes API e o faturamento.':apiError==='RESOURCE_EXHAUSTED'?'Limite de consultas do Google Maps atingido.':'Não foi possível identificar uma rota confiável para este endereço. Solicite a entrega pelo WhatsApp para confirmar o frete.';
-  return {ok:false,status:422,error};
- }
- const km=Math.ceil(meters/1000);
- if(km>cfg.km_max)return {ok:false,status:422,error:'Endereço fora do limite de entrega de '+cfg.km_max+' km. Entre em contato com a loja.'};
- const frete_cents=cfg.taxa_base_cents+km*cfg.valor_km_cents;
- if(!Number.isSafeInteger(frete_cents)||frete_cents<0)return {ok:false,status:503,error:'Falha no cálculo do frete.'};
- return {ok:true,km,frete_cents};
+ const city=cityKey(a.cidade),uf=String(a.uf||'').trim().toUpperCase();
+ if(!city||!/^[A-Z]{2}$/.test(uf))return {ok:false,status:400,error:'Informe a cidade e o estado para consultar o frete.'};
+ const url=String(env.SUPABASE_URL||'').replace(/\/+$/,'')+'/rest/v1/frete_cidades?select=cidade,uf,valor_cents&ativo=eq.true&uf=eq.'+encodeURIComponent(uf);
+ const res=await fetch(url,{headers:supabaseHeaders(env.SUPABASE_SECRET_KEY)});
+ if(!res.ok)return {ok:false,status:503,error:'Não foi possível consultar a tabela de entregas.'};
+ const rows=await res.json();
+ const row=rows.find(r=>cityKey(r.cidade)===city);
+ if(!row)return {ok:false,status:422,error:'Ainda não temos frete cadastrado para '+a.cidade+' - '+uf+'. Consulte a loja pelo WhatsApp ou escolha retirada.'};
+ if(!Number.isSafeInteger(row.valor_cents)||row.valor_cents<0)return {ok:false,status:503,error:'Preço de entrega inválido.'};
+ return {ok:true,frete_cents:row.valor_cents,cidade:row.cidade,uf:row.uf};
 }
 
 const json = (data, status = 200) =>
@@ -202,16 +188,16 @@ export async function onRequestPost({ request, env }) {
     // O servidor recalcula o frete; nunca confia no preço informado pelo navegador.
     const retirada=endereco.modalidade==='retirada';
     if(endereco.modalidade!=='retirada'&&endereco.modalidade!=='entrega')return json({error:'Modalidade de entrega inválida.'},400);
-    let freteCents=0,kmInformado=0;
+    let freteCents=0,kmInformado=0,freteCidade='';
     if(!retirada){
       const quote=await calculateShipping(env,{cep,uf,cidade,bairro,logradouro,numero,complemento});
       if(!quote.ok)return json({error:quote.error},quote.status||400);
-      kmInformado=quote.km;
+      freteCidade=quote.cidade+' - '+quote.uf;
       freteCents=quote.frete_cents;
     }
     total+=freteCents;
     if(total>100000000)return json({error:'Valor total inválido.'},400);
-    if(freteCents)lines.push({product_id:null,nome:'Frete de entrega ('+kmInformado+' km por rota)',quantity:1,unit_price_cents:freteCents});
+    if(freteCents)lines.push({product_id:null,nome:'Frete de entrega ('+freteCidade+')',quantity:1,unit_price_cents:freteCents});
     const orderId = crypto.randomUUID();
     const origin = new URL(request.url).origin;
 
@@ -234,7 +220,7 @@ export async function onRequestPost({ request, env }) {
           cliente_nome: nome,
           cliente_email: email || null,
           cliente_telefone: telefone,
-          entrega_endereco: {cep,uf,cidade,bairro,logradouro,numero,complemento,observacoes,modalidade:endereco.modalidade,km_informado:kmInformado,frete_cents:freteCents}
+          entrega_endereco: {cep,uf,cidade,bairro,logradouro,numero,complemento,observacoes,modalidade:endereco.modalidade,frete_cidade:freteCidade,frete_cents:freteCents}
         })
       }
     );
