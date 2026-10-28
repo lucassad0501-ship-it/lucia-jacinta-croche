@@ -2,7 +2,7 @@ const originAddress='Quadra 116, Lote 15, Vila Maria Auxiliadora, Santo Antônio
 function destinationAddress(a){return [a.logradouro,a.numero,a.bairro,a.cidade,a.uf,a.cep,'Brasil'].filter(Boolean).join(', ')}
 export async function calculateShipping(env,a){
  if(!env.GOOGLE_MAPS_API_KEY)return {ok:false,status:503,error:'Cálculo automático de frete ainda não configurado. Selecione retirada ou entre em contato com a loja.'};
- const url=String(env.SUPABASE_URL||'').replace(/\\/+$/,'')+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max';
+ const url=String(env.SUPABASE_URL||'').replace(/\/+$/,'')+'/rest/v1/config_frete?id=eq.1&select=taxa_base_cents,valor_km_cents,km_max';
  const cfgRes=await fetch(url,{headers:supabaseHeaders(env.SUPABASE_SECRET_KEY)});
  if(!cfgRes.ok)return {ok:false,status:503,error:'Não foi possível consultar o frete.'};
  const cfg=(await cfgRes.json())[0];
