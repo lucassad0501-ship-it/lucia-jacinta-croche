@@ -1,8 +1,8 @@
 (()=>{
 'use strict';
 let slides=[
- {eyebrow:'FEITO À MÃO COM AMOR',headline:'Delicadeza em cada ponto, <em>aconchego em cada lar.</em>',description:'Peças artesanais criadas com cuidado para deixar sua casa ainda mais bonita, acolhedora e cheia de personalidade.'},
- {eyebrow:'SEU LAR MERECE CARINHO',headline:'Um toque de crochê, <em>um mundo de encanto.</em>',description:'Conheça nossas peças e encontre detalhes especiais para decorar cada cantinho da sua casa.'},
+ {eyebrow:'ENCOMENDAS PERSONALIZADAS',headline:'Encomende seu tapete <em>do seu jeito!</em>',description:'Escolha o modelo, as cores e o tamanho. Faça seu orçamento pelo WhatsApp.',image:'https://wakhlrraspesozjlzxbs.supabase.co/storage/v1/object/public/produtos/98c9b757-740c-495e-bcc4-c380db4fe806/anuncios/962b977c-b3fe-4b64-a89c-f46316a8ee2c.png'},
+ {eyebrow:'ACOMPANHE NOSSAS NOVIDADES',headline:'Siga nossas redes sociais <em>e fique por dentro!</em>',description:'Novos modelos, lançamentos e inspirações. Instagram: @ljcro_che.',image:'https://wakhlrraspesozjlzxbs.supabase.co/storage/v1/object/public/produtos/98c9b757-740c-495e-bcc4-c380db4fe806/anuncios/4c0ee68c-ead1-4d2b-8421-1d6e344c02c8.png'},
  {eyebrow:'ENCOMENDAS ESPECIAIS',headline:'Sua ideia, nossas mãos, <em>uma peça única.</em>',description:'Quer conversar sobre cores, modelos ou encomendas? Fale com a Lúcia Jacinta pelo WhatsApp.'},
  {eyebrow:'CROCHÊ ARTESANAL',headline:'Pequenos detalhes, <em>grandes sentimentos.</em>',description:'Feito com dedicação, para presentear com carinho ou deixar seu lar ainda mais acolhedor.'}
 ];
