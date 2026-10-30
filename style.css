@@ -360,3 +360,6 @@ footer p{margin:7px 0}.footer-brand{font:700 23px Georgia,serif;color:#7f5866;ma
 @keyframes bannerReveal{from{opacity:.3;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:750px){.hero-banner-image{max-width:100%;margin-bottom:18px;border-radius:16px}.hero-banner-image img{max-height:260px}}
 @media(prefers-reduced-motion:reduce){.hero-banner-enter{animation:none}}
+
+/* Notificações: opção visível logo abaixo do cabeçalho */
+.notification-topbar{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:#fff6f8;border-bottom:1px solid #f1dce4;text-align:center}.notification-top-button{border:1px solid #b77a90;border-radius:999px;padding:9px 16px;background:#fff;color:#78465b;font:600 13px system-ui,sans-serif;cursor:pointer}.notification-top-button:hover{background:#f8e5ec}.notification-topbar span{font:12px system-ui,sans-serif;color:#795c66}@media(max-width:480px){.notification-topbar{gap:6px;padding:8px 10px}.notification-topbar span{font-size:11px}}
